@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GitHub API Testing</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <!-- DataTables CSS -->
+    <link href="https://cdn.datatables.net/1.10.21/css/dataTables.bootstrap4.min.css" rel="stylesheet">
+    <!-- Font Awesome CSS for icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <a class="navbar-brand"  href="index.html">GitHub API Testing</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="index.html" id="filterGeneratorLink">Search</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="customerSupportTicketsLink">Customer Tickets</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="repoFilesLink">Browse Files</a>
+                </li>
+            </ul>
+            <form class="form-inline my-2 my-lg-0">
+                <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
+                <button class="btn btn-outline-success my-2 my-sm-0" type="submit">
+                    <i class="fas fa-search"></i>
+                </button>
+            </form>
+            <button class="btn btn-primary ml-2" data-toggle="modal" data-target="#supportTicketModal">Customer Support</button>
+        </div>
+    </nav>
+
+    <div class="container-fluid mt-5">
+        <!-- Search Form -->
+        <div id="searchSection">
+            <form method="post" action="" id="filterForm" class="mt-4">
+                <div class="form-row">
+                    <div class="form-group col-md-2">
+                        <label for="issueType">Type:</label>
+                        <div class="input-group">
+                            <select name="issueType" id="issueType" class="form-control" data-info="Issues are used to track bugs, tasks, or enhancements in the project. Pull requests are proposed changes to the code which have been requested for Peer Review and Risk Assessment before merging into the main branch.">
+                                <option value="is:issue">Issue</option>
+                                <option value="is:pr">Pull Request</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group col-md-2">
+                        <label for="state">State:</label>
+                        <select name="state" id="state" class="form-control">
+                            <option value="">Any</option>
+                            <option value="state:open">Open</option>
+                            <option value="state:closed">Closed</option>
+                            <option value="state:merged">Merged</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group col-md-2">
+                        <label for="author">Author:</label>
+                        <select name="author" id="author" class="form-control">
+                            <option value="">Any</option>                            
+                        </select>
+                    </div>
+
+                    <div class="form-group col-md-2">
+                        <label for="assignee">Assigned:</label>
+                        <select name="assignee" id="assignee" class="form-control">
+                            <option value="">Any</option>
+                            <option value="">Not Assigned</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group col-md-2">
+                        <label for="mentions">Mentions:</label>
+                        <select name="mentions" id="mentions" class="form-control">
+                            <option value="">Any</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group col-md-2">
+                        <label for="label">Label:</label>
+                        <select name="label" id="label" class="form-control">
+                            <option value="">Any</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group col-md-2">
+                        <label for="project">Project:</label>
+                        <input type="text" name="project" id="project" class="form-control">
+                    </div>
+
+                    <div class="form-group col-md-2">
+                        <label for="milestone">Milestone:</label>
+                        <select name="milestone" id="milestone" class="form-control">
+                            <option value="">Any</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group col-md-2">
+                        <label for="dateRange">Date Range:</label>
+                        <select name="dateRange" id="dateRange" class="form-control">
+                            <option value="">Any</option>
+                            <option value="currentMonth">Current Month</option>
+                            <option value="lastMonth">Last Month</option>
+                            <option value="custom">Custom</option>
+                        </select>
+                    </div>
+
+                    <div id="customDateRange" class="form-group col-md-4" style="display:none;">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <label for="startDate">Start Date (YYYY-MM-DD):</label>
+                                <input type="text" name="startDate" id="startDate" class="form-control" data-info="The start date of the custom date range.">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="endDate">End Date (YYYY-MM-DD):</label>
+                                <input type="text" name="endDate" id="endDate" class="form-control" data-info="The end date of the custom date range.">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <button type="submit" id="generateButton" class="btn btn-primary">Generate</button>
+            </form>
+
+            <br>
+
+            <div id="filterDetails">
+                <!-- This will be populated as the form field is updated -->
+            </div>
+
+            <div id="generatedFilterString">
+                <!-- This will be populated with the generated filter string when the form is submitted -->
+            </div>
+
+            <div id="githubReport" class="mt-5">
+                <!-- This will be populated with the issues report when the form is submitted -->
+            </div>
+        </div>
+
+        <!-- File Browser Section -->
+        <div id="fileBrowserSection" style="display:none;">
+            <div class="input-group mb-3">
+                <input type="text" id="repoOwner" class="form-control" value="christie304" />
+                <input type="text" id="repoName" class="form-control mt-2" value="test" />
+                <button class="btn btn-primary mt-2" id="fetchRepoContents">Fetch Contents</button>
+            </div>
+            <div id="repoContents" class="mt-3"></div>
+        </div>
+    </div>
+
+    <!-- Modal for Support Ticket -->
+    <div class="modal fade" id="supportTicketModal" tabindex="-1" role="dialog" aria-labelledby="supportTicketModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="supportTicketModalLabel">Create Support Ticket</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="supportTicketForm">
+                        <div class="form-group">
+                            <label for="ticketTitle">Title</label>
+                            <input type="text" class="form-control" id="ticketTitle" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="ticketDescription">Description</label>
+                            <textarea class="form-control" id="ticketDescription" rows="4" required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS and dependencies -->
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <!-- DataTables JS -->
+    <script src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.21/js/dataTables.bootstrap4.min.js"></script>
+    <!-- Axios for HTTP requests -->
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+    <script>
+        // Your GitHub Personal Access Token
+        var githubToken = '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'; // Replace with your GitHub token
+
+        // Show/hide custom date range inputs
+        $('#dateRange').on('change', function () {
+            var customDateRangeDiv = $('#customDateRange');
+            if (this.value === 'custom') {
+                customDateRangeDiv.show();
+            } else {
+                customDateRangeDiv.hide();
+            }
+        });
+
+        // Fetch repository data from GitHub API
+        var repoName = 'christie304/test'; // Replace with your repository name
+
+        // Fetch labels
+        $.ajax({
+            url: `https://api.github.com/repos/${repoName}/labels`,
+            method: 'GET',
+            headers: {
+                'Authorization': `token ${githubToken}`
+            },
+            success: function(labels) {
+                var labelSelect = $('#label');
+                labelSelect.html('<option value="">Any</option>');
+                $.each(labels, function(index, label) {
+                    labelSelect.append(`<option value="${label.name}">${label.name}</option>`);
+                });
+            }
+        });
+
+        // Fetch milestones
+        $.ajax({
+            url: `https://api.github.com/repos/${repoName}/milestones`,
+            method: 'GET',
+            headers: {
+                'Authorization': `token ${githubToken}`
+            },
+            success: function(milestones) {
+                var milestoneSelect = $('#milestone');
+                milestoneSelect.html('<option value="">Any</option>');
+                $.each(milestones, function(index, milestone) {
+                    milestoneSelect.append(`<option value="${milestone.title}">${milestone.title}</option>`);
+                });
+            }
+        });
+
+        // Fetch contributors
+        $.ajax({
+            url: `https://api.github.com/repos/${repoName}/contributors`,
+            method: 'GET',
+            headers: {
+                'Authorization': `token ${githubToken}`
+            },
+            success: function(contributors) {
+                var authorSelect = $('#author');
+                var assigneeSelect = $('#assignee');
+                var mentionsSelect = $('#mentions');
+                //authorSelect.html('<option value="">Any</option>');
+                //assigneeSelect.html('<option value="">Any</option>');
+                //mentionsSelect.html('<option value="">Any</option>');
+                $.each(contributors, function(index, contributor) {
+                    var option = `<option value="${contributor.login}">${contributor.login}</option>`;
+                    authorSelect.append(option);
+                    assigneeSelect.append(option);
+                    mentionsSelect.append(option);
+                });
+            }
+        });
+
+        // Generate filter string and fetch results
+        $('#generateButton').on('click', function (e) {
+            e.preventDefault();
+            generateFilterAndFetchResults();
+        });
+
+        function generateFilterAndFetchResults() {
+            var issueType = $('#issueType').val();
+            var state = $('#state').val();
+            var author = $('#author').val();
+            var assignee = $('#assignee').val();
+            var mentions = $('#mentions').val();
+            var label = $('#label').val();
+            var project = $('#project').val();
+            var milestone = $('#milestone').val();
+            var dateRange = $('#dateRange').val();
+            var startDate = $('#startDate').val();
+            var endDate = $('#endDate').val();
+
+            var filterString = issueType;
+
+            if (state) filterString += ' ' + state;
+            if (author) filterString += ' author:' + author;
+            if (assignee) filterString += ' assignee:' + assignee;
+            if (mentions) filterString += ' mentions:' + mentions;
+            if (label) filterString += ' label:' + label;
+            if (project) filterString += ' project:' + project;
+            if (milestone) filterString += ' milestone:' + milestone;
+
+            if (!assignee) filterString += ' no:assignee';
+
+            if (dateRange === 'currentMonth' || dateRange === 'lastMonth') {
+                var now = new Date();
+                var startOfMonth, endOfMonth;
+                if (dateRange === 'currentMonth') {
+                    startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+                    endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+                } else {
+                    startOfMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+                    endOfMonth = new Date(now.getFullYear(), now.getMonth(), 0);
+                }
+                filterString += ' updated:>=' + startOfMonth.toISOString().split('T')[0] + ' updated:<=' + endOfMonth.toISOString().split('T')[0];
+            } else if (dateRange === 'custom' && startDate && endDate) {
+                filterString += ' updated:>=' + startDate + ' updated:<=' + endDate;
+            }
+
+            $('#generatedFilterString').html(`
+                <div class="alert alert-info d-flex align-items-center" role="alert">
+                    <span id="filter">${filterString}</span>
+                    <button class="btn btn-sm btn-outline-secondary ml-3" id="copyButton">Copy</button>
+                </div>
+            `);
+
+            $.ajax({
+                url: `https://api.github.com/search/issues?q=repo:${repoName} ${filterString}`,
+                method: 'GET',
+                headers: {
+                    'Authorization': `token ${githubToken}`
+                },
+                success: function(data) {
+                    var githubReport = $('#githubReport');
+                    //githubReport.html('<h2>Filtered Results</h2>');
+                    if (data.items.length > 0) {
+                        var table = `<table id="issuesTable" class="table table-striped">
+                                        <thead>
+                                            <tr>
+                                                <th>Title</th>
+                                                <th>Number</th>
+                                                <th>State</th>
+                                                <th>Labels</th>
+                                                <th>Comments</th>
+                                                <th>Created At</th>
+                                                <th>Updated At</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>`;
+                        $.each(data.items, function(index, issue) {
+                            var labels = issue.labels.map(function(label) {
+                                return label.name;
+                            }).join(', ');
+
+                            var assignees = issue.assignees.map(function(assignee) {
+                                return assignee.login;
+                            }).join(', ');
+
+                            table += `<tr>
+                                        <td><a href="${issue.html_url}" target="_blank">${issue.title}</a></td>
+                                        <td>${issue.number}</td>
+                                        <td>${issue.state}</td>
+                                        <td>${labels}</td>
+                                        <td>${issue.comments}</td>
+                                        <td>${new Date(issue.created_at).toLocaleString()}</td>
+                                        <td>${new Date(issue.updated_at).toLocaleString()}</td>
+                                      </tr>`;
+                        });
+                        table += `</tbody></table>`;
+                        githubReport.append(table);
+
+                        // Initialize DataTables
+                        $('#issuesTable').DataTable();
+                    } else {
+                        githubReport.append('<p>No issues found.</p>');
+                    }
+                }
+            });
+
+            // Add copy functionality
+            $(document).on('click', '#copyButton', function () {
+                var filterString = $('#filter').text();
+                navigator.clipboard.writeText(filterString).then(function() {
+                   // alert('Copied to clipboard!');
+                   // prevent default and change button text
+                   $('#copyButton').html('Copied!');
+                }).catch(function(error) {
+                    alert('Failed to copy: ' + error);
+                });
+            });
+        }
+
+        // Handle support ticket form submission
+        $('#supportTicketForm').on('submit', function (e) {
+            e.preventDefault();
+
+            var title = $('#ticketTitle').val();
+            var description = $('#ticketDescription').val();
+
+            var requestBody = {
+                title: title,
+                body: description,
+                labels: ["Client-Submitted"]
+            };
+
+            $.ajax({
+                url: `https://api.github.com/repos/${repoName}/issues`,
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `token ${githubToken}`
+                },
+                data: JSON.stringify(requestBody),
+                success: function(data) {
+                    console.log('Success:', data);
+                    alert('Support ticket created successfully!');
+                    $('#supportTicketModal').modal('hide');
+                },
+                error: function(error) {
+                    console.error('Error:', error);
+                    alert('Error creating support ticket.');
+                }
+            });
+        });
+
+        // Show Search section and hide others
+        $('#filterGeneratorLink').on('click', function (e) {
+            $('#searchSection').show();
+            $('#fileBrowserSection').hide();
+        });
+
+        // Show Customer Tickets section and hide others
+        $('#customerSupportTicketsLink').on('click', function (e) {
+            e.preventDefault();
+
+            $('#filterForm')[0].reset();
+            $('#label').val('Client-Submitted');
+            generateFilterAndFetchResults();
+            $('#searchSection').show();
+            $('#fileBrowserSection').hide();
+        });
+
+        // Show File Browser section and hide others
+        $('#repoFilesLink').on('click', function (e) {
+            e.preventDefault();
+            $('#searchSection').hide();
+            $('#fileBrowserSection').show();
+        });
+
+        // Fetch repository contents
+        $('#fetchRepoContents').on('click', function () {
+            var owner = $('#repoOwner').val();
+            var repo = $('#repoName').val();
+            if (owner && repo) {
+                $.ajax({
+                    url: `https://api.github.com/repos/${owner}/${repo}/contents`,
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `token ${githubToken}`
+                    },
+                    success: function(contents) {
+                        var contentList = '<ul class="list-group">';
+                        $.each(contents, function(index, item) {
+                            contentList += `<li class="list-group-item">
+                                                <a href="${item.html_url}" target="_blank">${item.name}</a>
+                                            </li>`;
+                        });
+                        contentList += '</ul>';
+                        $('#repoContents').html(contentList);
+                    },
+                    error: function () {
+                        $('#repoContents').html('<p class="text-danger">Repository not found</p>');
+                    }
+                });
+            }
+        });
+
+        // Update filter details when form fields are changed
+        $('#filterForm select, #filterForm input').on('change', function () {
+            var info = $(this).data('info');
+            if (info) {
+                var fieldName = $(this).closest('.form-group').find('label').text();
+                $('#filterDetails').append(`<p><strong>${fieldName}</strong> ${info}</p>`);
+            }
+        });
+    </script>
+</body>
+</html>

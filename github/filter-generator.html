@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>GitHub Filter Generator</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <!-- DataTables CSS -->
+    <link href="https://cdn.datatables.net/1.10.21/css/dataTables.bootstrap4.min.css" rel="stylesheet">
+    <!-- Font Awesome CSS for cute icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container-fluid mt-5">
+        <h1>GitHub Filter Generator</h1>
+        <form method="post" action="" class="mt-4">
+            <div class="form-row">
+                <div class="form-group col-md-2">
+                    <label for="issueType">Issue Type:</label>
+                    <select name="issueType" id="issueType" class="form-control">
+                        <option value="is:issue">Issue</option>
+                        <option value="is:pr">Pull Request</option>
+                    </select>
+                </div>
+
+                <div class="form-group col-md-2">
+                    <label for="state">State:</label>
+                    <select name="state" id="state" class="form-control">
+                        <option value="">Any</option>
+                        <option value="state:open">Open</option>
+                        <option value="state:closed">Closed</option>
+                        <option value="state:merged">Merged</option>
+                    </select>
+                </div>
+
+                <div class="form-group col-md-2">
+                    <label for="author">Author:</label>
+                    <select name="author" id="author" class="form-control">
+                        <option value="">Any</option>
+                    </select>
+                </div>
+
+                <div class="form-group col-md-2">
+                    <label for="assignee">Assignee:</label>
+                    <select name="assignee" id="assignee" class="form-control">
+                        <option value="">Any</option>
+                    </select>
+                </div>
+
+                <div class="form-group col-md-2">
+                    <label for="mentions">Mentions:</label>
+                    <select name="mentions" id="mentions" class="form-control">
+                        <option value="">Any</option>
+                    </select>
+                </div>
+
+                <div class="form-group col-md-2">
+                    <label for="label">Label:</label>
+                    <select name="label" id="label" class="form-control">
+                        <option value="">Any</option>
+                    </select>
+                </div>
+
+                <div class="form-group col-md-2">
+                    <label for="project">Project:</label>
+                    <input type="text" name="project" id="project" class="form-control">
+                </div>
+
+                <div class="form-group col-md-2">
+                    <label for="milestone">Milestone:</label>
+                    <select name="milestone" id="milestone" class="form-control">
+                        <option value="">Any</option>
+                    </select>
+                </div>
+
+                <div class="form-group col-md-2">
+                    <label for="dateRange">Date Range:</label>
+                    <select name="dateRange" id="dateRange" class="form-control">
+                        <option value="">Any</option>
+                        <option value="currentMonth">Current Month</option>
+                        <option value="lastMonth">Last Month</option>
+                        <option value="custom">Custom</option>
+                    </select>
+                </div>
+
+                <div id="customDateRange" class="form-group col-md-4" style="display:none;">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label for="startDate">Start Date (YYYY-MM-DD):</label>
+                            <input type="text" name="startDate" id="startDate" class="form-control">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="endDate">End Date (YYYY-MM-DD):</label>
+                            <input type="text" name="endDate" id="endDate" class="form-control">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <button type="submit" name="generate" class="btn btn-primary">Generate</button>
+        </form>
+
+        <br>
+
+        <div id="generatedFilterString">
+            <!-- This will be populated with the generated filter string when the form is submitted -->
+        </div>
+
+        <div id="issuesReport" class="mt-5">
+            <!-- This will be populated with the issues report when the form is submitted -->
+        </div>
+    </div>
+
+    <!-- Bootstrap JS and dependencies -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <!-- DataTables JS -->
+    <script src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.21/js/dataTables.bootstrap4.min.js"></script>
+    <!-- Axios for HTTP requests -->
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+    <script>
+        // Your GitHub Personal Access Token
+        var githubToken = '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'; // Replace with your actual token
+
+        // Show/hide custom date range inputs
+        document.getElementById('dateRange').addEventListener('change', function () {
+            var customDateRangeDiv = document.getElementById('customDateRange');
+            if (this.value === 'custom') {
+                customDateRangeDiv.style.display = 'block';
+            } else {
+                customDateRangeDiv.style.display = 'none';
+            }
+        });
+
+        // Fetch repository data from GitHub API
+        var repoName = 'ctrent-ddots/ddots';
+        
+        // Fetch labels
+        fetch(`https://api.github.com/repos/${repoName}/labels`, {
+            headers: {
+                'Authorization': `token ${githubToken}`
+            }
+        })
+        .then(response => response.json())
+        .then(labels => {
+            var labelSelect = document.getElementById('label');
+            labelSelect.innerHTML = '<option value="">Any</option>';
+            labels.forEach(label => {
+                var option = document.createElement('option');
+                option.value = label.name;
+                option.textContent = label.name;
+                labelSelect.appendChild(option);
+            });
+        });
+
+        // Fetch milestones
+        fetch(`https://api.github.com/repos/${repoName}/milestones`, {
+            headers: {
+                'Authorization': `token ${githubToken}`
+            }
+        })
+        .then(response => response.json())
+        .then(milestones => {
+            var milestoneSelect = document.getElementById('milestone');
+            milestoneSelect.innerHTML = '<option value="">Any</option>';
+            milestones.forEach(milestone => {
+                var option = document.createElement('option');
+                option.value = milestone.title;
+                option.textContent = milestone.title;
+                milestoneSelect.appendChild(option);
+            });
+        });
+
+        // Fetch contributors
+        fetch(`https://api.github.com/repos/${repoName}/contributors`, {
+            headers: {
+                'Authorization': `token ${githubToken}`
+            }
+        })
+        .then(response => response.json())
+        .then(contributors => {
+            var authorSelect = document.getElementById('author');
+            var assigneeSelect = document.getElementById('assignee');
+            var mentionsSelect = document.getElementById('mentions');
+            authorSelect.innerHTML = '<option value="">Any</option>';
+            assigneeSelect.innerHTML = '<option value="">Any</option>';
+            mentionsSelect.innerHTML = '<option value="">Any</option>';
+            contributors.forEach(contributor => {
+                var option = document.createElement('option');
+                option.value = contributor.login;
+                option.textContent = contributor.login;
+                authorSelect.appendChild(option.cloneNode(true));
+                assigneeSelect.appendChild(option.cloneNode(true));
+                mentionsSelect.appendChild(option.cloneNode(true));
+            });
+        });
+
+        // Generate filter string
+        document.querySelector('form').addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            var issueType = document.getElementById('issueType').value;
+            var state = document.getElementById('state').value;
+            var author = document.getElementById('author').value;
+            var assignee = document.getElementById('assignee').value;
+            var mentions = document.getElementById('mentions').value;
+            var label = document.getElementById('label').value;
+            var project = document.getElementById('project').value;
+            var milestone = document.getElementById('milestone').value;
+            var dateRange = document.getElementById('dateRange').value;
+            var startDate = document.getElementById('startDate').value;
+            var endDate = document.getElementById('endDate').value;
+
+            var filterString = issueType;
+
+            if (state) filterString += ' ' + state;
+            if (author) filterString += ' author:' + author;
+            if (assignee) filterString += ' assignee:' + assignee;
+            if (mentions) filterString += ' mentions:' + mentions;
+            if (label) filterString += ' label:' + label;
+            if (project) filterString += ' project:' + project;
+            if (milestone) filterString += ' milestone:' + milestone;
+
+            if (dateRange === 'currentMonth' || dateRange === 'lastMonth') {
+                var now = new Date();
+                var startOfMonth, endOfMonth;
+                if (dateRange === 'currentMonth') {
+                    startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+                    endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+                } else {
+                    startOfMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+                    endOfMonth = new Date(now.getFullYear(), now.getMonth(), 0);
+                }
+                filterString += ' updated:>=' + startOfMonth.toISOString().split('T')[0] + ' updated:<=' + endOfMonth.toISOString().split('T')[0];
+            } else if (dateRange === 'custom' && startDate && endDate) {
+                filterString += ' updated:>=' + startDate + ' updated:<=' + endDate;
+            }
+
+            document.getElementById('generatedFilterString').innerHTML = `
+                <h2>Generated GitHub Filter String</h2>
+                <div class="alert alert-info d-flex align-items-center" role="alert">
+                    <span id="filter">${filterString}</span>
+                    <button class="btn btn-sm btn-outline-secondary ml-3" id="copyButton">Copy</button>
+                </div>
+            `;
+
+            // Fetch issues based on filter
+            fetch(`https://api.github.com/search/issues?q=repo:${repoName} ${filterString}`, {
+                headers: {
+                    'Authorization': `token ${githubToken}`
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                var issuesReport = document.getElementById('issuesReport');
+                issuesReport.innerHTML = '<h2>Issues Report</h2>';
+                if (data.items.length > 0) {
+                    var table = `<table id="issuesTable" class="table table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th>Title</th>
+                                            <th>Number</th>
+                                            <th>State</th>
+                                            <th>Created At</th>
+                                            <th>Updated At</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>`;
+                    data.items.forEach(issue => {
+                        table += `<tr>
+                                    <td><a href="${issue.html_url}" target="_blank">${issue.title}</a></td>
+                                    <td>${issue.number}</td>
+                                    <td>${issue.state}</td>
+                                    <td>${new Date(issue.created_at).toLocaleString()}</td>
+                                    <td>${new Date(issue.updated_at).toLocaleString()}</td>
+                                  </tr>`;
+                    });
+                    table += `</tbody></table>`;
+                    issuesReport.innerHTML += table;
+
+                    // Initialize DataTables
+                    $('#issuesTable').DataTable();
+                } else {
+                    issuesReport.innerHTML += '<p>No issues found.</p>';
+                }
+            });
+
+            // Add copy functionality
+            document.getElementById('copyButton').addEventListener('click', function () {
+                var filterString = document.getElementById('filter').textContent;
+                navigator.clipboard.writeText(filterString).then(function() {
+                    alert('Copied to clipboard!');
+                }).catch(function(error) {
+                    alert('Failed to copy: ' + error);
+                });
+            });
+        });
+    </script>
+</body>
+</html>

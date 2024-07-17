@@ -1,0 +1,36 @@
+<div class="container mt-5" id="repo-browser">
+    <h2>Repository Browser</h2>
+    <input type="text" id="repoOwner" class="form-control" placeholder="Enter repository owner" />
+    <input type="text" id="repoName" class="form-control mt-2" placeholder="Enter repository name" />
+    <button class="btn btn-primary mt-2" id="fetchRepoContents">Fetch Contents</button>
+    <div id="repoContents" class="mt-3"></div>
+</div>
+
+<script>
+    $('#fetchRepoContents').on('click', function () {
+        var owner = $('#repoOwner').val();
+        var repo = $('#repoName').val();
+        if (owner && repo) {
+            $.ajax({
+                url: `https://api.github.com/repos/${owner}/${repo}/contents`,
+                method: 'GET',
+                headers: {
+                    'Authorization': `token ${githubToken}`
+                },
+                success: function (contents) {
+                    var contentList = '<ul class="list-group">';
+                    $.each(contents, function (index, item) {
+                        contentList += `<li class="list-group-item">
+                                            <a href="${item.html_url}" target="_blank">${item.name}</a>
+                                        </li>`;
+                    });
+                    contentList += '</ul>';
+                    $('#repoContents').html(contentList);
+                },
+                error: function () {
+                    $('#repoContents').html('<p class="text-danger">Repository not found</p>');
+                }
+            });
+        }
+    });
+</script>

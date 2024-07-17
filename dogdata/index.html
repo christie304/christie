@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Urine Test Results for Luna</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+<div class="container mt-5">
+    <h2 class="text-center">D.O.G.</h2>
+    <h4 class="text-center">(<strong>D</strong>ata <strong>O</strong>bservation and <strong>G</strong>uidance</small>)</h4>
+    <div class="row justify-content-center">
+        <div class="col-md-12 text-center">
+            <div class="d-flex justify-content-around">
+                <button id="showPHChart" class="btn btn-sm btn-primary">pH</button>
+                <button id="showLeukChart" class="btn btn-sm btn-secondary">Leu.</button>
+                <button id="showNitritesChart" class="btn btn-sm btn-secondary">Nitrites</button>
+                <button id="showProteinChart" class="btn btn-sm btn-secondary">Pro.</button>
+                <button id="showGlucoseChart" class="btn btn-sm btn-secondary">Glu.</button>
+                <button id="showDashboard" class="btn btn-sm btn-secondary">Dashboard</button>
+            </div>
+            <div class="row mt-3">
+                <div class="col-md-6 col-lg-4">
+                    <canvas id="phChart"></canvas>
+                </div>
+                <div class="col-md-6 col-lg-4">
+                    <canvas id="leukChart" style="display: none;"></canvas>
+                </div>
+                <div class="col-md-6 col-lg-4">
+                    <canvas id="nitritesChart" style="display: none;"></canvas>
+                </div>
+                <div class="col-md-6 col-lg-4">
+                    <canvas id="proteinChart" style="display: none;"></canvas>
+                </div>
+                <div class="col-md-6 col-lg-4">
+                    <canvas id="glucoseChart" style="display: none;"></canvas>
+                </div>
+            </div>
+            <a href="#" id="showNotesLink" class="btn btn-primary mt-3">Click to show notes</a>
+            <ul id="notesList" class="list-group mt-3 text-left" style="display: none;"></ul>
+            <div class="container mt-5 text-left">
+                <div class="alert alert-success">
+                  <h4 class="alert-heading">Round of appaws!</h4>
+                  <p>The pH levels are balanced and normal currently at 6 with an average of <span id="avgPh"></span></p>
+                  <p>There are no leukocytes or nitrites and there haven't been the last few tests.</p>
+                  <p>Protein levels are unknown with no known recent average.</p>
+                  <p class="mb-0">Please check the pH levels using the <a href="fakelink">clean catch method</a> or refer to the <a class="fakelink">documentation</a> for more info.</p>
+                </div>
+              </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Sample data for the charts
+    const labels = ['06/10/24', '06/17/24', '06/18/24', '06/18/24', '06/18/24', '06/19/24', '06/19/24', '06/20/24 6:45a', '06/20/24 9:42a','07/02/24 3:30p', '07/05/24 7:30a', '07/10/24 7:00a', '07/11/24 7:30a'];
+    const collectMethod = ['Vet', 'Vet', 'Home', 'Home', 'Home', 'Home', 'Home', 'Home', 'Home','Home','Home', 'Home', 'Home'];
+    const notes = ['Blood in Urine', '7 Days On Clavacillin', 'Adding ACV', 'ACV', 'ACV', 'ACV', 'ACV', 'N/A', 'N/A','NEW STRIPS. Cranimals and Distilled Water','N/A', 'N/A', 'N/A'];
+    const pHData = [7.0, 9.0, 8.0, 8, 7.5, 7.5, 7.5, 7.0, 7.0, 8.0, 8.0, 6.5, 6.5];
+    const leukData = ['Positive', 'Negative', 'Negative', 'Negative', 'Negative', 'Negative', 'Negative', 'Negative', 'Negative','Negative', 'Negative','Negative'];
+    const nitritesData = ['Negative', 'Negative', 'Negative', 'Negative', 'Negative', 'Negative', 'Negative', 'Negative', 'Negative', 'Negative', 'Negative','Negative'];
+    const proteinData = [2, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0,0]; // Values representing 0 to 5+ protein levels
+    const glucoseData = ['Negative', 'Negative', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A','N/A']; 
+
+    // Function to calculate the average of the last 3 values
+    function calculateAverageOfLastThree(data) {
+        if (data.length < 3) {
+            console.log("Not enough data to calculate the average of the last 3 values.");
+            return null;
+        }
+
+        const lastThreeValues = data.slice(-3);
+        const sum = lastThreeValues.reduce((acc, value) => acc + value, 0);
+        const average = sum / lastThreeValues.length;
+
+        return average;
+    }
+
+    // Calculate the average of the last 3 pH values
+    const averageOfLastThreePH = calculateAverageOfLastThree(pHData);
+    document.getElementById('avgPh').textContent = averageOfLastThreePH;
+
+    // Convert positive/negative to numeric for line charts
+    const convertToNumeric = (data) => data.map(value => value === 'Positive' ? 1 : 0);
+
+    // pH Chart configuration
+    const pHConfig = {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'pH Levels',
+                data: pHData,           
+                borderColor: 'rgba(75, 192, 192, 1)',
+                backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                fill: false,
+                tension: 0.1
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                tooltip: {
+                    callbacks: {
+                        // Customize the tooltip to show notes
+                        label: function(context) {
+                            const index = context.dataIndex;
+                            const note = notes[index];
+                            const value = context.dataset.data[index];
+                            const method = collectMethod[index];
+                            return `pH: ${value} - ${method} - ${note}`;
+                        }
+                    }
+                }
+            },
+            scales: {
+                x: {
+                    display: true,
+                    title: {
+                        display: true,
+                        text: 'Collection Date / Time'
+                    }
+                },
+                y: {
+                    display: true,
+                    title: {
+                        display: true,
+                        text: 'pH Level'
+                    },
+                    suggestedMin: 6,
+                    suggestedMax: 8
+                }
+            }
+        }
+    };
+
+    // Leukocytes Chart configuration
+    const leukConfig = {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Leukocytes',
+                data: convertToNumeric(leukData),
+                borderColor: 'rgba(255, 99, 132, 1)',
+                backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                fill: false,
+                tension: 0.1
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            const index = context.dataIndex;
+                            const note = notes[index];
+                            const method = collectMethod[index];
+                            return `Leukocytes: ${leukData[index]} - ${method} - ${note}`;
+                        }
+                    }
+                }
+            },
+            scales: {
+                x: {
+                    display: true,
+                    title: {
+                        display: true,
+                        text: 'Collection Date / Time'
+                    }
+                },
+                y: {
+                    display: true,
+                    title: {
+                        display: true,
+                        text: 'Leukocytes'
+                    },
+                    ticks: {
+                        callback: function(value) {
+                            return value === 1 ? 'Positive' : 'Negative';
+                        }
+                    },
+                    suggestedMin: 0,
+                    suggestedMax: 1
+                }
+            }
+        }
+    };
+
+    // Nitrites Chart configuration
+    const nitritesConfig = {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Nitrites',
+                data: convertToNumeric(nitritesData),
+                borderColor: 'rgba(54, 162, 235, 1)',
+                backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                fill: false,
+                tension: 0.1
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            const index = context.dataIndex;
+                            const note = notes[index];
+                            const method = collectMethod[index];
+                            return `Nitrites: ${nitritesData[index]} - ${method} - ${note}`;
+                        }
+                    }
+                }
+            },
+            scales: {
+                x: {
+                    display: true,
+                    title: {
+                        display: true,
+                        text: 'Collection Date / Time'
+                    }
+                },
+                y: {
+                    display: true,
+                    title: {
+                        display: true,
+                        text: 'Nitrites'
+                    },
+                    ticks: {
+                        callback: function(value) {
+                            return value === 1 ? 'Positive' : 'Negative';
+                        }
+                    },
+                    suggestedMin: 0,
+                    suggestedMax: 1
+                }
+            }
+        }
+    };
+
+    // Protein Chart configuration
+    const proteinConfig = {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Protein',
+                data: proteinData,
+                borderColor: 'rgba(75, 192, 192, 1)',
+                backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                fill: false,
+                tension: 0.1
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            const index = context.dataIndex;
+                            const note = notes[index];
+                            const method = collectMethod[index];
+                            return `Protein: ${proteinData[index]}+ - ${method} - ${note}`;
+                        }
+                    }
+                }
+            },
+            scales: {
+                x: {
+                    display: true,
+                    title: {
+                        display: true,
+                        text: 'Collection Date / Time'
+                    }
+                },
+                y: {
+                    display: true,
+                    title: {
+                        display: true,
+                        text: 'Protein Level'
+                    },
+                    ticks: {
+                        callback: function(value) {
+                            return value + '+';
+                        }
+                    },
+                    suggestedMin: 0,
+                    suggestedMax: 5
+                }
+            }
+        }
+    };
+
+    // Glucose Chart configuration
+    const glucoseConfig = {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Glucose',
+                data: glucoseData,
+                borderColor: 'rgba(153, 102, 255, 1)',
+                backgroundColor: 'rgba(153, 102, 255, 0.2)',
+                fill: false,
+                tension: 0.1
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            const index = context.dataIndex;
+                            const note = notes[index];
+                            const method = collectMethod[index];
+                            return `Glucose: ${glucoseData[index]} - ${method} - ${note}`;
+                        }
+                    }
+                }
+            },
+            scales: {
+                x: {
+                    display: true,
+                    title: {
+                        display: true,
+                        text: 'Collection Date / Time'
+                    }
+                },
+                y: {
+                    display: true,
+                    title: {
+                        display: true,
+                        text: 'Glucose Level'
+                    },
+                    ticks: {
+                        callback: function(value) {
+                            return value + '+';
+                        }
+                    },
+                    suggestedMin: 0,
+                    suggestedMax: 5
+                }
+            }
+        }
+    };
+
+    // Function to update button colors
+    function updateButtonColors(activeButtonId) {
+        const buttons = ['showPHChart', 'showLeukChart', 'showNitritesChart', 'showProteinChart', 'showGlucoseChart', 'showDashboard'];
+        buttons.forEach(buttonId => {
+            const button = document.getElementById(buttonId);
+            if (buttonId === activeButtonId) {
+                button.classList.remove('btn-secondary');
+                button.classList.add('btn-primary');
+            } else {
+                button.classList.remove('btn-primary');
+                button.classList.add('btn-secondary');
+            }
+        });
+    }
+
+    // Render the charts
+    window.onload = function() {
+        const phCtx = document.getElementById('phChart').getContext('2d');
+        window.phChart = new Chart(phCtx, pHConfig);
+
+        const leukCtx = document.getElementById('leukChart').getContext('2d');
+        window.leukChart = new Chart(leukCtx, leukConfig);
+
+        const nitritesCtx = document.getElementById('nitritesChart').getContext('2d');
+        window.nitritesChart = new Chart(nitritesCtx, nitritesConfig);
+
+        const proteinCtx = document.getElementById('proteinChart').getContext('2d');
+        window.proteinChart = new Chart(proteinCtx, proteinConfig);
+
+        const glucoseCtx = document.getElementById('glucoseChart').getContext('2d');
+        window.glucoseChart = new Chart(glucoseCtx, glucoseConfig);
+    };
+
+    // Show notes when the link is clicked
+    document.getElementById('showNotesLink').addEventListener('click', function(event) {
+        event.preventDefault();
+        const notesList = document.getElementById('notesList');
+        if (notesList.style.display === 'none') {
+            notesList.style.display = 'block';
+            notesList.innerHTML = '';
+            notes.forEach((note, index) => {
+                const listItem = document.createElement('li');
+                listItem.className = 'list-group-item';
+                listItem.innerHTML = `Date: ${labels[index]}<br>
+                    Method: ${collectMethod[index]}<br>
+                    pH: ${pHData[index]}<br>
+                    Notes: ${note}<br>
+                    Leukocytes: ${leukData[index]}<br>
+                    Nitrites: ${nitritesData[index]}<br>
+                    Protein: ${proteinData[index]}+<br>
+                    Glucose: ${glucoseData[index]}`;
+
+
+                notesList.appendChild(listItem);
+            });
+        } else {
+            notesList.style.display = 'none';
+        }
+    });
+
+    // Toggle between pH, Leukocytes, Nitrites, Protein, and Glucose charts
+    document.getElementById('showPHChart').addEventListener('click', function() {
+        document.getElementById('phChart').style.display = 'block';
+        document.getElementById('leukChart').style.display = 'none';
+        document.getElementById('nitritesChart').style.display = 'none';
+        document.getElementById('proteinChart').style.display = 'none';
+        document.getElementById('glucoseChart').style.display = 'none';
+        updateButtonColors('showPHChart');
+    });
+
+    document.getElementById('showLeukChart').addEventListener('click', function() {
+        document.getElementById('phChart').style.display = 'none';
+        document.getElementById('leukChart').style.display = 'block';
+        document.getElementById('nitritesChart').style.display = 'none';
+        document.getElementById('proteinChart').style.display = 'none';
+        document.getElementById('glucoseChart').style.display = 'none';
+        updateButtonColors('showLeukChart');
+    });
+
+    document.getElementById('showNitritesChart').addEventListener('click', function() {
+        document.getElementById('phChart').style.display = 'none';
+        document.getElementById('leukChart').style.display = 'none';
+        document.getElementById('nitritesChart').style.display = 'block';
+        document.getElementById('proteinChart').style.display = 'none';
+        document.getElementById('glucoseChart').style.display = 'none';
+        updateButtonColors('showNitritesChart');
+    });
+
+    document.getElementById('showProteinChart').addEventListener('click', function() {
+        document.getElementById('phChart').style.display = 'none';
+        document.getElementById('leukChart').style.display = 'none';
+        document.getElementById('nitritesChart').style.display = 'none';
+        document.getElementById('proteinChart').style.display = 'block';
+        document.getElementById('glucoseChart').style.display = 'none';
+        updateButtonColors('showProteinChart');
+    });
+
+    document.getElementById('showGlucoseChart').addEventListener('click', function() {
+        document.getElementById('phChart').style.display = 'none';
+        document.getElementById('leukChart').style.display = 'none';
+        document.getElementById('nitritesChart').style.display = 'none';
+        document.getElementById('proteinChart').style.display = 'none';
+        document.getElementById('glucoseChart').style.display = 'block';
+        updateButtonColors('showGlucoseChart');
+    });
+
+    document.getElementById('showDashboard').addEventListener('click', function() {
+        document.getElementById('phChart').style.display = 'block';
+        document.getElementById('leukChart').style.display = 'block';
+        document.getElementById('nitritesChart').style.display = 'block';
+        document.getElementById('proteinChart').style.display = 'block';
+        document.getElementById('glucoseChart').style.display = 'block';
+        updateButtonColors('showDashboard');
+    });
+</script>
+
+<!-- Bootstrap JS and dependencies -->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+</body>
+</html>

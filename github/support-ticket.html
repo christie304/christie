@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Support Ticket</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome for icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container mt-5">
+        <button class="btn btn-primary" data-toggle="modal" data-target="#supportTicketModal">
+            <i class="fas fa-ticket-alt"></i> Create Support Ticket
+        </button>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="supportTicketModal" tabindex="-1" role="dialog" aria-labelledby="supportTicketModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="supportTicketModalLabel">Create Support Ticket</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="supportTicketForm">
+                        <div class="form-group">
+                            <label for="ticketTitle">Title</label>
+                            <input type="text" class="form-control" id="ticketTitle" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="ticketDescription">Description</label>
+                            <textarea class="form-control" id="ticketDescription" rows="4" required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS and dependencies -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+        // Handle form submission
+        document.getElementById('supportTicketForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            var title = document.getElementById('ticketTitle').value;
+            var description = document.getElementById('ticketDescription').value;
+
+            var requestBody = {
+                title: title,
+                body: description,
+                labels: ["Client-Submitted"]
+            };
+
+            fetch('https://api.github.com/repos/ctrent-ddots/ddots/issues', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'token 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'
+                },
+                body: JSON.stringify(requestBody)
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Success:', data);
+                alert('Support ticket created successfully!');
+                $('#supportTicketModal').modal('hide');
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+                alert('Error creating support ticket.');
+            });
+        });
+    </script>
+</body>
+</html>
