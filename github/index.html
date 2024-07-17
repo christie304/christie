@@ -27,8 +27,8 @@
                 </li>
             </ul>
             <form class="form-inline my-2 my-lg-0">
-                <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
-                <button class="btn btn-outline-success my-2 my-sm-0" type="submit">
+                <input class="form-control mr-sm-2" type="search" id="git-repo" placeholder="Format: owner/repo" aria-label="Search">
+                <button class="btn btn-outline-success my-2 my-sm-0" id="search-repo">
                     <i class="fas fa-search"></i>
                 </button>
             </form>
@@ -40,7 +40,7 @@
         <div id="searchSection">
             <form method="post" action="" id="filterForm" class="mt-4">
                 <div class="form-row">
-                    <div class="form-group col-md-2">
+                    <div class="form-group col-md-1">
                         <label for="issueType">Type:</label>
                         <div class="input-group">
                             <select name="issueType" id="issueType" class="form-control" data-info="Issues are used to track bugs, tasks, or enhancements in the project. Pull requests are proposed changes to the code which have been requested for Peer Review and Risk Assessment before merging into the main branch.">
@@ -50,7 +50,7 @@
                         </div>
                     </div>
 
-                    <div class="form-group col-md-2">
+                    <div class="form-group col-md-1">
                         <label for="state">State:</label>
                         <select name="state" id="state" class="form-control">
                             <option value="">Any</option>
@@ -60,14 +60,14 @@
                         </select>
                     </div>
 
-                    <div class="form-group col-md-2">
+                    <div class="form-group col-md-1">
                         <label for="author">Author:</label>
                         <select name="author" id="author" class="form-control">
                             <option value="">Any</option>                            
                         </select>
                     </div>
 
-                    <div class="form-group col-md-2">
+                    <div class="form-group col-md-1">
                         <label for="assignee">Assigned:</label>
                         <select name="assignee" id="assignee" class="form-control">
                             <option value="">Any</option>
@@ -75,14 +75,14 @@
                         </select>
                     </div>
 
-                    <div class="form-group col-md-2">
+                    <div class="form-group col-md-1">
                         <label for="mentions">Mentions:</label>
                         <select name="mentions" id="mentions" class="form-control">
                             <option value="">Any</option>
                         </select>
                     </div>
 
-                    <div class="form-group col-md-2">
+                    <div class="form-group col-md-1">
                         <label for="label">Label:</label>
                         <select name="label" id="label" class="form-control">
                             <option value="">Any</option>
@@ -94,7 +94,7 @@
                         <input type="text" name="project" id="project" class="form-control">
                     </div>
 
-                    <div class="form-group col-md-2">
+                    <div class="form-group col-md-1">
                         <label for="milestone">Milestone:</label>
                         <select name="milestone" id="milestone" class="form-control">
                             <option value="">Any</option>
@@ -193,9 +193,8 @@
     <script>
         // Your GitHub Personal Access Token
         //var githubToken = 'YOUR_GITHUB_TOKEN';
-        var githubToken = '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'; // Replace with your GitHub token
-
-        // Show/hide custom date range inputs
+        //var githubToken = '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'; // Replace with your GitHub token
+        
         $('#dateRange').on('change', function () {
             var customDateRangeDiv = $('#customDateRange');
             if (this.value === 'custom') {
@@ -205,16 +204,29 @@
             }
         });
 
+        $('#search-repo').on('click', function(e) {
+            e.preventDefault();
+            var repo = $('#git-repo').val(); 
+            searchRepository(repo);  
+        });
+
+        function searchRepository(){
+            var repoName = $('#git-repo').val();
+            var filterString = $('#filter').text();
+            console.log(repoName);
+             // Show/hide custom date range inputs
+       
+
         // Fetch repository data from GitHub API
-        var repoName = 'christie304/test'; // Replace with your repository name
+        //var repoName = 'christie304/test'; // Replace with your repository name
 
         // Fetch labels
         $.ajax({
             url: `https://api.github.com/repos/${repoName}/labels`,
             method: 'GET',
-            headers: {
+            /*headers: {
                 'Authorization': `token ${githubToken}`
-            },
+            },*/
             success: function(labels) {
                 var labelSelect = $('#label');
                 labelSelect.html('<option value="">Any</option>');
@@ -228,9 +240,9 @@
         $.ajax({
             url: `https://api.github.com/repos/${repoName}/milestones`,
             method: 'GET',
-            headers: {
+            /*headers: {
                 'Authorization': `token ${githubToken}`
-            },
+            },*/
             success: function(milestones) {
                 var milestoneSelect = $('#milestone');
                 milestoneSelect.html('<option value="">Any</option>');
@@ -244,9 +256,9 @@
         $.ajax({
             url: `https://api.github.com/repos/${repoName}/contributors`,
             method: 'GET',
-            headers: {
+            /*headers: {
                 'Authorization': `token ${githubToken}`
-            },
+            },*/
             success: function(contributors) {
                 var authorSelect = $('#author');
                 var assigneeSelect = $('#assignee');
@@ -262,14 +274,20 @@
                 });
             }
         });
+       
 
-        // Generate filter string and fetch results
+        }
+        
+        
+               // Generate filter string and fetch results
         $('#generateButton').on('click', function (e) {
             e.preventDefault();
             generateFilterAndFetchResults();
+
         });
 
         function generateFilterAndFetchResults() {
+            var repoName = $('#git-repo').val();
             var issueType = $('#issueType').val();
             var state = $('#state').val();
             var author = $('#author').val();
@@ -292,7 +310,7 @@
             if (project) filterString += ' project:' + project;
             if (milestone) filterString += ' milestone:' + milestone;
 
-            if (!assignee) filterString += ' no:assignee';
+            //if (!assignee) filterString += ' no:assignee';
 
             if (dateRange === 'currentMonth' || dateRange === 'lastMonth') {
                 var now = new Date();
@@ -317,11 +335,11 @@
             `);
 
             $.ajax({
-                url: `https://api.github.com/search/issues?q=repo:${repoName} ${filterString}`,
+                url: `https://api.github.com/search/issues?q=repo:${encodeURIComponent(repoName)}+${encodeURIComponent(filterString)}`,
                 method: 'GET',
-                headers: {
+                /*headers: {
                     'Authorization': `token ${githubToken}`
-                },
+                },*/
                 success: function(data) {
                     var githubReport = $('#githubReport');
                     //githubReport.html('<h2>Filtered Results</h2>');
