@@ -1,0 +1,8 @@
+User-agent: *
+Disallow: /archive/
+Disallow: /forms/
+Disallow: /libs/
+Disallow: /scss/
+Disallow: /vendor/
+
+Sitemap: https://christie.technology/sitemap.xml

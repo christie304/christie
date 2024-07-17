@@ -1,0 +1,646 @@
+<link rel="manifest" href="/manifest.json">
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Heart Health</title>
+    <meta name="theme-color" content="#5180BA">
+    <meta name="description" content="Healthy Amount of Fats Calculator">
+    <link rel="icon" href="img/heart-health-icon.png" type="image/png">
+    <link rel="shortcut icon" href="img/heart-health-icon.png" type="image/png">
+    <link rel="apple-touch-icon" href="img/heart-health-icon.png">
+
+    <!-- our project just needs Font Awesome Solid + Brands -->
+    <link href="assets/fontawesome/css/fontawesome.css" rel="stylesheet">
+    <link href="assets/fontawesome/css/brands.css" rel="stylesheet">
+    <link href="assets/fontawesome/css/solid.css" rel="stylesheet">
+
+    <link rel="stylesheet" type="text/css" href="style/addtohomescreen.css">
+    <script src="vendor/js/addtohomescreen.min.js"></script>
+ 
+
+    <style>
+        body {
+            font-family: Roboto, Arial, Verdana, sans-serif;
+            font-weight: 300;
+            font-size: 20px;
+        }
+        h2{font-size:16px !important;color:navy;}
+        p{color:black!important;}
+    </style>
+    <link rel="stylesheet" href="vendor/css/bootstrap.min.css">
+</head>
+<body>
+    
+
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <a class="navbar-brand" href="#"><img src="img/heart-health-logo.png" width="270" /></a>
+        <button id="hamburger" class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav">
+            <li class="nav-item active">
+              <a class="nav-link" href="#" data-content="Home">Home <span class="sr-only">(current)</span></a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#" data-content="FatCalculator">Fat Calculator</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#" data-content="GoodFoodList">Good Food List</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#" data-content="BadFoodList">Bad Food List</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#" data-content="SugarCalculator">Sugar Calculator</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link"  data-toggle="modal" data-target="#aichat">Heart AI</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#" data-content="MoreInfo">More Info</a>
+            </li>
+          </ul>
+        </div>
+      </nav>
+      
+    <div class="content container" id="Home">
+        <!---<input type="button" class="btn btn-primary" id="install-button" onclick="addToHomescreen()" value="Add to Home Screen" />
+            --->
+        
+        <p>
+            Heart Health is a simple app that helps you calculate the amount of fat and sugar in your food. 
+            It also has a list of foods that are good for your heart and foods that are bad for your heart.
+        </p>
+        <p>
+          <a href="http://www.pwascanit.com" class="btn btn-primary"><i class="fa fa-barcode" aria-hidden="true"></i> Barcode Scanner</a>
+        </p>
+
+        <p>
+          <div id="main"></div>
+        </p>
+        <!---
+        <p>
+          <a href="https://christie.technology/hearthealth/scanner.html" class="btn btn-primary">Barcode Scanner</a> - BETA!
+        </p>
+        --->            
+    </div>
+
+    <div class="modal fade" id="aichat" tabindex="-1" role="dialog" aria-labelledby="aichat" aria-hidden="true">
+      <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+        <div class="modal-content">
+          <div class="modal-body">
+            <div class="row">
+              <div class="col-lg-12">
+                <h2 class="modal-title" id="aichat" class="header header-primary">Heart AI</h2>
+                <h5>Type a food or ingredient only to find out what the AHA recommends.</h5>
+                <p>
+                  <div id="chat-container">
+                    <div id="chat-log"></div>
+                    <input type="text" class="form-control" id="user-input" placeholder="Your message...">
+                    <button id="send-button" class="btn btn-primary">Send</button>
+                  </div>
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="content container" id="FatCalculator">
+        <form id="nutrition-form">
+            <label for="calories">Calories: </label><br>
+            <input type="number" id="calories" name="calories" value="0"><br><br>
+            
+            <label for="saturatedFat">Saturated Fat (g): </label><br>
+            <input type="number" id="saturatedFat" name="saturatedFat" value="0"><br><br>
+            
+            <label for="transFat">Trans Fat (g): </label><br>
+            <input type="number" id="transFat" name="transFat" value="0"><br><br>
+            
+            <input type="button" class="btn btn-primary" value="Calculate" onclick="calculatePercentage()">
+        </form>
+
+        <p>Actual: <span id="result">0</span> calories from fat<br> 
+        AHA Recommends: Less than <span id="aha">0</span> calories from fat<br>
+        <div id="message"></div>
+        </p>
+    </div>
+
+    <div class="content container" id="SugarCalculator">
+        <form id="sugar-form">
+            <label for="grams-of-sugar">Grams of Sugar:</label>
+            <input type="number" id="grams-of-sugar" name="grams-of-sugar" required>
+            <input type="button" class="btn btn-primary" value="Calculate" onclick="calculateSugar();">
+        </form>
+
+        <p id="sugar"></p>
+        
+        Women:<br>        
+        <p id="sugar_spoons"></p>
+        <p>American Heart Association recommends less than 25 grams (6 teaspoons OR 2 tablespoons) total per day.</p>
+   
+        Men:<br>
+        <p id="sugar_men_spoons"></p>
+        <p>American Heart Association recommends less than 36 grams (9 teaspoons or 3 tablespoons) of added sugar per day.</p>
+   
+   </div>
+
+    <div class="content container" id="MoreInfo">
+        <br>
+        This webapp was developed by Christie Trent 
+        (<a href="https://christie.technology">https://christie.technology</a>)<br>
+        <br><br>
+        
+            <h3>Instructions to Add to Home Screen</h3>
+            
+            <h4>For Android Users (using Google Chrome):</h4>
+            <ol>
+                <li><strong>Open the Menu</strong></li>
+                <p>Tap the three vertical dots located at the top-right corner of the screen to open the menu.</p>
+                
+                <li><strong>Select 'Add to Home screen' Option</strong></li>
+                <p>From the dropdown menu, select the “Add to Home screen” or “Install” option. The wording may vary slightly based on your version of Chrome.</p>
+                
+                <li><strong>Confirm</strong></li>
+                <p>You might be asked to confirm the action or to name the app shortcut. Press the ‘Add’ button after naming your app.</p>
+                
+                <li><strong>Check Your Home Screen</strong></li>
+                <p>Once you've completed these steps, you should see an icon for the web app on your home screen. Tapping this icon will open the web app in a standalone window, much like a native app.</p>
+            </ol>
+        
+            <h4>For iPhone Users (using Safari):</h4>
+            <ol>
+                <li><strong>Tap the Share Button</strong></li>
+                <p>Tap the share button, which is the square icon with an arrow pointing upward that's located at the bottom of the Safari window.</p>
+                
+                <li><strong>Select 'Add to Home Screen' Option</strong></li>
+                <p>In the share menu, scroll down and tap the "Add to Home Screen" option. This may be located in a different place depending on your iOS version, but it should be in the share menu.</p>
+                
+                <li><strong>Name the App and Confirm</strong></li>
+                <p>You'll be asked to choose a name for the home screen icon. So, name it whatever you like and then tap ‘Add’.</p>
+                
+                <li><strong>Check Your Home Screen</strong></li>
+                <p>Once you’ve done this, you should see an icon for the web app on your home screen. Tapping this icon will open the web app in a standalone window, very much like a native app.</p>
+            </ol>
+        
+    </div>
+
+    <div class="content container" id="GoodFoodList">
+        <br>
+        <h4>American Heart Association recommends:</h4>
+        <ul>
+            <li>a wide variety of <span class="btn btn-sm btn-primary p-1" data-toggle="modal" data-target="#fruitsModal">fruits</span> and 
+                <span class="btn btn-sm btn-primary p-1" data-toggle="modal" data-target="#veggiesModal">vegetables</span></li><br>      
+            <li>whole grains and products made up of mostly grains</li><br>
+            <li>healthy sources of protein (mostly plants such as <span class="btn btn-sm btn-primary p-1" data-toggle="modal" data-target="#legumesModal">legumes</span> and nuts; fish and seafood; low-fat or nonfat dairy; and, if you eat meat and poultry, ensuring it is lean and unprocessed)</li><br>
+            <li>liquid non-tropical vegetable oils</li><br>
+            <li>minimally processed foods</li><br>
+            <li>minimized intake of added <span class="btn btn-sm btn-primary p-1" id="SugarCalculatorLink" value="Sugar Calculator" data-content="SugarCalculator">sugars</span></li><br>
+            <li>foods prepared with little or no salt</li><br>
+            <li>limited or preferably no alcohol intake</li><br>
+        </ul> 
+    </div>
+
+    <div class="content container" id="BadFoodList">
+      <br>
+        <h4>American Heart Association recommends you avoid:</h4>
+        <ol>
+          <li><strong>Saturated Fats</strong>: Can raise blood cholesterol levels.
+              <ul>
+                  <li>Fatty cuts of meat (like beef, lamb, pork)</li>
+                  <li>Chicken with the skin</li>
+                  <li>Whole-fat dairy products (like butter, cheese, milk)</li>
+                  <li>Tropical oils (like coconut oil, palm oil)</li>
+              </ul>
+          </li>
+          <li><strong>Trans Fats</strong>: Raise bad cholesterol and lower good cholesterol.
+              <ul>
+                  <li>Processed foods</li>
+                  <li>Commercially baked goods (like cookies, cakes)</li>
+                  <li>Anything with "partially hydrogenated oils" in the ingredients</li>
+              </ul>
+          </li>
+          <li><strong>Sodium (Salt)</strong>: Can contribute to high blood pressure.
+              <ul>
+                  <li>Processed foods</li>
+                  <li>Canned soups</li>
+                  <li>Some breads and rolls</li>
+                  <li>Cold cuts and cured meats</li>
+                  <li>Poultry</li>
+                  <li>Pizza</li>
+              </ul>
+          </li>
+          <li><strong>Sugary Foods and Beverages</strong>: Can lead to weight gain and other health issues.
+              <ul>
+                  <li>Soft drinks</li>
+                  <li>Candy</li>
+                  <li>Baked goods</li>
+                  <li>Many packaged foods</li>
+              </ul>
+          </li>
+          <li><strong>Red Meat</strong>: Limit and opt for alternative protein sources like: 
+              <ul>
+                  <li>Fish</li>
+                  <li>Poultry</li>
+                  <li><span class="btn btn-sm btn-primary p-1" data-toggle="modal" data-target="#plantProteinModal">Plant-based proteins</span></li>
+              </ul>
+          </li>
+          <li><strong>Alcohol</strong>: If consumed, it should be in moderation.
+              <ul>
+                  <li>Up to one drink per day for women</li>
+                  <li>Up to two drinks per day for men</li>
+              </ul>
+          </li>
+      </ol>
+      
+    </div>
+
+    <!-- Modal -->
+<div class="modal fade" id="plantProteinModal" tabindex="-1" aria-labelledby="plantProteinModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="plantProteinModal">Plant-Based Proteins</h5>
+        <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close">X</button>
+      </div>
+      <div class="modal-body">
+        <ol>
+          <li><strong>Legumes</strong>:
+              <ul>
+                  <li>Lentils</li>
+                  <li>Chickpeas (garbanzo beans)</li>
+                  <li>Black beans</li>
+                  <li>Kidney beans</li>
+                  <li>Pinto beans</li>
+                  <li>Mung beans</li>
+                  <li>Peas</li>
+              </ul>
+          </li>
+          <li><strong>Grains</strong>:
+              <ul>
+                  <li>Quinoa</li>
+                  <li>Farro</li>
+                  <li>Bulgur</li>
+                  <li>Barley</li>
+                  <li>Brown rice</li>
+                  <li>Oats</li>
+              </ul>
+          </li>
+          <li><strong>Nuts and Seeds</strong>:
+              <ul>
+                  <li>Almonds</li>
+                  <li>Peanuts</li>
+                  <li>Walnuts</li>
+                  <li>Chia seeds</li>
+                  <li>Flaxseeds</li>
+                  <li>Hemp seeds</li>
+                  <li>Sunflower seeds</li>
+                  <li>Pumpkin seeds (pepitas)</li>
+                  <li>Sesame seeds</li>
+              </ul>
+          </li>
+          <li><strong>Soy Products</strong>:
+              <ul>
+                  <li>Tofu</li>
+                  <li>Tempeh</li>
+                  <li>Edamame (young soybeans)</li>
+                  <li>Textured vegetable protein (TVP)</li>
+                  <li>Soy milk</li>
+              </ul>
+          </li>
+          <li><strong>Seitan</strong>: Also known as wheat meat or wheat gluten, it's made from gluten, the main protein in wheat.</li>
+          <li><strong>Plant-Based Meat Alternatives</strong>: Products that mimic the taste and texture of meat, made from various plant-based ingredients like Beyond Meat, Impossible Foods, etc.</li>
+          <li><strong>Green Vegetables</strong>:
+              <ul>
+                  <li>Broccoli</li>
+                  <li>Spinach</li>
+                  <li>Brussels sprouts</li>
+                  <li>Asparagus</li>
+                  <li>Green beans</li>
+              </ul>
+          </li>
+          <li><strong>Mycoprotein</strong>: Found in products like Quorn, it's a protein-rich fungus-based source.</li>
+          <li><strong>Spirulina</strong>: A blue-green algae that's a complete protein source.</li>
+          <li><strong>Nutritional Yeast</strong>: Often used for its cheesy flavor in vegan dishes, it's also a good source of protein.</li>
+      </ol>
+      
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- Modal -->
+<div class="modal fade" id="fruitsModal" tabindex="-1" aria-labelledby="fruitsModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="fruitsModalLabel">List of Fruits and Their Heart Health Benefits</h5>
+          <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close">X</button>
+        </div>
+        <div class="modal-body">
+          <ul>
+            <li><strong>Berries</strong> (Blueberries, Strawberries, Raspberries, Blackberries): Rich in antioxidants, particularly flavonoids, which have been associated with improved heart health.</li>
+            <li><strong>Citrus Fruits</strong> (Oranges, Grapefruits, Lemons, Limes): High in vitamin C and other antioxidants. They contain flavonoids, which may help to lower blood pressure and reduce inflammation.</li>
+            <li><strong>Apples:</strong> Great source of fiber and vitamin C, both of which have been shown to help lower the risk of heart disease.</li>
+            <li><strong>Avocado:</strong> Rich in monounsaturated fats, which can help to reduce bad cholesterol levels, lower blood pressure, and improve heart health.</li>
+            <li><strong>Pomegranate:</strong> Packed with antioxidants, such as anthocyanins and polyphenols, that have been shown to improve cholesterol profiles and lower blood pressure.</li>
+            <li><strong>Bananas:</strong> Good source of potassium, which helps to control blood pressure.</li>
+          </ul>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<!-- Modal -->
+<div class="modal fade" id="legumesModal" tabindex="-1" aria-labelledby="legumesModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="legumesModalLabel">List of Legumes and Their Heart Health Benefits</h5>
+        <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close">X</button>
+      </div>
+      <div class="modal-body">
+        <ul>
+          <li><strong>Lentils:</strong> Great source of protein and fiber, which can help lower cholesterol and stabilize blood sugar levels.</li>
+          <li><strong>Chickpeas (Garbanzo Beans):</strong> Rich in fiber and protein, and have been shown to help reduce levels of LDL (“bad”) cholesterol.</li>
+          <li><strong>Black Beans:</strong> Good source of fiber, protein, and antioxidants that help to lower inflammation in the body and improve heart health.</li>
+          <li><strong>Kidney Beans:</strong> Great source of fiber and protein, which help to lower cholesterol and stabilize blood sugar levels.</li>
+          <li><strong>Navy Beans:</strong> High in fiber and protein, and have been found to help reduce the risk of chronic diseases such as heart disease.</li>
+          <li><strong>Pinto Beans:</strong> Good source of fiber and protein, and have been shown to help lower cholesterol levels.</li>
+          <li><strong>Soybeans (and Soy Products):</strong> Good source of protein and are low in saturated fat. Some research suggests that consuming soy products may help to reduce LDL cholesterol levels and improve heart health.</li>
+          <li><strong>Peas (including Split Peas):</strong> Low in fat and also a good source of fiber and protein, which makes them beneficial for heart health.</li>
+        </ul>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+  <!-- Modal -->
+  <div class="modal fade" id="veggiesModal" tabindex="-1" aria-labelledby="veggiesModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="veggiesModalLabel">List of Heart-Healthy Vegetables and Their Benefits</h5>
+          <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close">X</button>
+        </div>
+        <div class="modal-body">
+          <ul>
+            <li><strong>Leafy Greens</strong> (Spinach, Kale, Collard Greens): High in fiber, antioxidants, and nitrates, which can help to lower blood pressure.</li>
+            <li><strong>Tomatoes:</strong> Rich in lycopene, a powerful antioxidant that has been associated with a reduced risk of heart disease.</li>
+            <li><strong>Carrots:</strong> High in fiber and antioxidants like beta-carotene, which are good for your heart.</li>
+            <li><strong>Beets:</strong> High in nitrates, which can help to lower blood pressure. They are also a good source of antioxidants and fiber.</li>
+            <li><strong>Broccoli and Other Cruciferous Vegetables</strong> (Cauliflower, Cabbage, Brussels Sprouts): High in fiber and contain antioxidants that may help to reduce inflammation and improve heart health.</li>
+            <li><strong>Legumes</strong> (Beans, Lentils, Chickpeas): Great source of protein and fiber, which can help to lower cholesterol and improve heart health.</li>
+            <li><strong>Sweet Potatoes:</strong> Great source of fiber, vitamins, and antioxidants like beta-carotene, which are good for your heart.</li>
+            <li><strong>Red, Yellow, and Orange Peppers:</strong> High in vitamin C and other antioxidants, which are good for heart health.</li>
+          </ul>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+
+    <div class="content" id="BadFoodList">
+        AVOID!
+    </div>
+
+
+    <!-- jQuery -->
+    <script src="vendor/js/jquery.js"></script>
+    <!-- Bootstrap JS -->
+    <script src="vendor/js/bootstrap.min.js"></script>
+    <script>
+     const apiKey = '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';
+
+// Replace 'YOUR_MODEL_ID' with your desired model ID
+const modelId = 'gpt-3.5-turbo';
+
+// URL for making API requests
+const apiUrl = 'https://api.openai.com/v1/chat/completions';
+
+// Function to send a message to ChatGPT API
+function sendMessage(message) {
+  $('#chat-log').append('<p><strong>You:</strong> ' + message + '</p>');
+  $('#user-input').val('');
+
+  $.ajax({
+    url: apiUrl,
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ' + apiKey,
+    },
+    data: JSON.stringify({
+      model: modelId,
+      messages: [{ role: 'system', content: 'You are a helpful assistant.' }, { role: 'user', content: message }],
+    }),
+    success: function(data) {
+      const reply = data.choices[0].message.content;
+      $('#chat-log').append('<p><strong>AI:</strong> ' + reply + '</p>');
+    },
+    error: function(error) {
+      console.error('Error:', error);
+    }
+  });
+}
+
+// Event listener for send button
+$('#send-button').click(function() {
+  const userInput = $('#user-input').val();
+  if (userInput) {
+    userInputNew = 'What does the American Heart Association say about ' + userInput + ' in terms of heart-health?';
+    sendMessage(userInputNew);
+  }
+});
+
+// Event listener for Enter key press
+$('#user-input').keypress(function(event) {
+  if (event.which === 13) {
+    const userInput = $('#user-input').val();
+    if (userInput) {
+      userInputNew = 'What does the American Heart Association say about ' + userInput + ' in terms of heart-health?';
+      sendMessage(userInputNew);
+    }
+  }
+});
+
+
+
+    function calculateSugar(){
+        // Conversion factor: 1 tablespoon = 12.5 grams of sugar
+        var gramsPerTablespoon = 12.5;
+
+        // Get the grams of sugar entered by the user
+        var gramsOfSugar = document.getElementById('grams-of-sugar').value;
+            
+        // Convert the grams of sugar to tablespoons
+        var tablespoons = gramsOfSugar / gramsPerTablespoon;
+
+        document.getElementById("sugar").textContent = tablespoons + " tablespoons of sugar";
+
+        var spoon_green = '<i class="fa-solid fa-spoon" style="color: #35a748;"></i>';
+        var spoon_red = '<i class="fa-solid fa-spoon" style="color: #ff0000;"></i>';
+
+        // if tablespoons is less than 2, then it's green
+        // show number of tablespoons totals in tablespoons but only 2 should be green, the rest should be red
+        // loop over the number of tablespoons and add the spoon icon to the page
+        document.getElementById("sugar_spoons").innerHTML = "";
+
+        for (i = 0; i < tablespoons; i++) {
+            if (i < 2) {
+                document.getElementById("sugar_spoons").innerHTML += spoon_green;
+            }
+            else {
+                document.getElementById("sugar_spoons").innerHTML += spoon_red;
+            }
+        }
+
+        var spoon_green = '<i class="fa-solid fa-spoon" style="color: #35a748;"></i>';
+        var spoon_red = '<i class="fa-solid fa-spoon" style="color: #ff0000;"></i>';
+
+        // if tablespoons is less than 2, then it's green
+        // show number of tablespoons totals in tablespoons but only 2 should be green, the rest should be red
+        // loop over the number of tablespoons and add the spoon icon to the page
+        document.getElementById("sugar_men_spoons").innerHTML = "";
+
+        for (i = 0; i < tablespoons; i++) {
+            if (i < 3) {
+                document.getElementById("sugar_men_spoons").innerHTML += spoon_green;
+            }
+            else {
+                document.getElementById("sugar_men_spoons").innerHTML += spoon_red;
+            }
+        }
+
+    }
+
+
+        function calculatePercentage() {
+            // Get the values from the input fields
+            var calories = parseFloat(document.getElementById("calories").value);
+            var saturatedFat = parseFloat(document.getElementById("saturatedFat").value);
+            var transFat = parseFloat(document.getElementById("transFat").value);
+            
+            // Add saturated and trans fat together and multiply by 9
+            var fatCalories = (saturatedFat + transFat) * 9;
+            
+            // Divide calories by that number and calculate it as a percentage
+            var percentage = 0;
+            if (fatCalories !== 0) {
+                //percentage = (calories / fatCalories) * 100;
+                percentage = fatCalories;
+                var ahaPercentage = (6 / 100) * calories;                
+            }
+            
+            percentage = percentage.toFixed(2);
+          
+            document.getElementById("result").textContent = percentage;
+            document.getElementById("aha").textContent = ahaPercentage;
+            
+            if(ahaPercentage<percentage){
+             document.getElementById("message").textContent = 'High amount of calories from fat.\n\nTry to eat less than 6% of your calories from fat. If you eat 1200 calories per day, that is 72 calories from fat or 8 grams of fat.';
+             $("#message").attr("class", "alert alert-danger");
+            }
+            else{
+             document.getElementById("message").textContent = 'Healthy amount of calories from fat. Enjoy!';
+             $("#message").attr("class", "alert alert-success");
+            }
+        }
+
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/service-worker.js')
+        .then((registration) => {
+          console.log('Service Worker registered with scope: ', registration.scope);
+        })
+        .catch((error) => {
+          console.log('Service Worker registration failed: ', error);
+        });
+        }
+
+        $("#SugarCalculatorLink").click(function(){
+          $('.content').hide();
+          $("#SugarCalculator").show();
+        });
+
+        // Wait for the DOM to be fully loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            // Get all the navigation links
+            const navLinks = document.querySelectorAll('.nav-link');
+            
+            // Add a click event listener to each link
+            navLinks.forEach(link => {
+            link.addEventListener('click', function(event) {
+                // Prevent the default action of the link
+                event.preventDefault();
+                
+                // Hide all content divs
+                const contentDivs = document.querySelectorAll('.content');
+                contentDivs.forEach(div => {
+                div.style.display = 'none';
+                });
+                
+                // Show the content div associated with this link
+                const contentID = this.getAttribute('data-content');
+                const contentDiv = document.getElementById(contentID);
+
+                if (contentDiv) {
+                    contentDiv.style.display = 'block';                    
+                }
+
+                $("#navbarNav").attr("class", "navbar-collapse collapse");
+                $("#hamburger").attr("class", "navbar-toggler collapsed");
+            });
+            });
+        });
+
+        $(document).ready(function(){
+            // hide all content divs
+            $('.content').hide();
+            $("#Home").show();
+                $.ajax({
+                  type: "GET",
+                  url: "https://newsroom.heart.org/cats/heart_news.xml",
+                  dataType: "xml",
+                  success: parseXml
+                });
+             
+
+              function parseXml(xml)
+              {
+                $("#main").html("<ul id='content' data-role='listview' data-inset='true'></ul>");
+                $(xml).find("item").each(function()
+                {
+                  $("#content").append("<li><a href='"+$(this).find("link").text()+"'><img src='"+$(this).find("image").text()+"'/><h2>"+$(this).find("title").text()+"</h2><p>"+$(this).find("title").text()+"</p></a></li>");
+                });  
+              }
+        });
+    </script>
+
+
+    <!----
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4Ck4SOF4y4Ck4SOF4y4Ck4SOF4y4Ck4SOF4y4Ck4" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.1/dist/umd/popper.min.js" integrity="sha384-eMNCOe7tC1do4GGD6CJ0nxd0Vln4Oe3vxjt5Fhp6lW1zZ4w2gxO8n4s6s2a2rjJ4" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" integrity="sha384-pzjw8f+ua7Kw1TIq0v8FqFjcJ6pajs/rfdfs3SO+kD4Ck5BdPtF+to8xM6B5z6W5" crossorigin="anonymous"></script>
+    ---->
+
+</body>
+</html>

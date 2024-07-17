@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Grace River</title>
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    .highlight {
+      background-color: white;
+    }
+    .level-3 {
+      color: red;
+    }
+    .level-2 {
+      color: orange;
+    }
+    .level-1 {
+      color: green;
+    }
+    .level-0 {
+      color: gray;
+    }
+    .legend-button {
+      margin-right: 10px;
+    }
+    .legend-details {
+      display: none;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1 class="mt-5"></h1>
+    <div class="form-group row align-items-center">
+      <div class="col-lg-4 text-center">
+        <img src="Grace-River-Pets.png" alt="Logo" class="img img-responsive" style="width:30%">
+      </div>
+      <div class="col-lg-8">
+        <div id="legend">
+          <h2></h2>
+          <button class="btn btn-danger legend-button" id="level-3-btn" title="Severe intolerance was detected. Symptoms may have already physically manifested and require immediate attention. It is recommended to avoid these food and environmental items for 6-8 weeks.">Level 3</button>
+          <button class="btn btn-warning legend-button" id="level-2-btn" title="Moderate intolerance was detected. Symptoms may be starting to affect day to day life, indicating a more noticeable symptom. It is recommended to avoid these food and environmental items during the elimination period.">Level 2</button>
+          <button class="btn btn-success legend-button" id="level-1-btn" title="Mild intolerance was detected. Any symptoms are unlikely to be noticeable. Feed these foods in rotation and moderation, and minimize environmental exposure if possible.">Level 1</button>
+          <button class="btn btn-secondary legend-button" id="level-0-btn">Level 0</button>
+          <small><em>Click to read details</em></small>
+          
+          <div id="level-3-details" class="legend-details alert alert-danger">
+            Severe intolerance was detected. Symptoms may have already physically manifested and require immediate attention. It is recommended to avoid these food and environmental items for 6-8 weeks.
+          </div>
+          <div id="level-2-details" class="legend-details alert alert-warning">
+            Moderate intolerance was detected. Symptoms may be starting to affect day to day life, indicating a more noticeable symptom. It is recommended to avoid these food and environmental items during the elimination period.
+          </div>
+          <div id="level-1-details" class="legend-details alert alert-success">
+            Mild intolerance was detected. Any symptoms are unlikely to be noticeable. Feed these foods in rotation and moderation, and minimize environmental exposure if possible.
+          </div>
+          <div id="level-0-details" class="legend-details alert alert-secondary">
+            No intolerance was detected. <br>These foods and environmental items are safe to consume and be exposed to.<br>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <textarea class="form-control" id="ingredients-textarea" rows="4" placeholder="Paste ingredients list here..."></textarea>
+      <button class="btn btn-primary mt-3" id="check-ingredients-button" type="button">Check Allergens</button>
+    </div>
+
+    
+
+    <div id="results" class="mt-4">
+      <h2>Results</h2>
+      <div id="results-content" style="padding: 10px; background-color: #fff3cd; border: 1px solid #ffeeba; color: #856404;">
+        Enter items and click "Check Allergens" to see the results.
+      </div>
+
+    </div>
+
+    <!---- need space here ---->
+    <div class="mt-5"></div>
+
+
+    <div>
+      <h4>Dairy</h4>
+      <ul>
+        <li class="level-3">
+          <span data-item="cheese, american, american cheese">Cheese (American)</span>, 
+          <span data-item="milk, dairy, cow, cows milk, cow's milk">Milk (cow)</span>
+        </li>
+        <li class="level-2">
+          <span data-item="cheese, swiss">Cheese (Swiss)</span>
+        </li>
+        <li class="level-1">N/A</li>
+        <li class="level-0">
+          <span data-item="cheese, cheddar, cheddar cheese, cottage, cottage cheese">Cheese</span> (Cheddar, Cottage)</span>, 
+          <span data-item="yogurt, greek, greek yogurt, plain yogurt">Yogurt</span> (Greek, Plain)</span>
+        </li>
+      </ul>
+    </div>
+    <div>
+      <h4>Fat</h4>
+      <ul>
+        <li class="level-3">
+          <span data-item="Almond, Almond Oil">Almond Oil</span>, 
+          <span data-item="Canola Oil">Canola Oil</span>, 
+          <span data-item="Chicken, Chicken Fat">Chicken Fat</span>, 
+          <span data-item="Pork, Pork Fat">Pork Fat</span>, 
+          <span data-item="Salmon, Salmon Oil">Salmon Oil</span>, 
+          <span data-item="Soybean Oil">Soybean Oil</span>, 
+          <span data-item="Sunflower Oil">Sunflower Oil</span>
+        </li>
+        <li class="level-2">
+          <span data-item="Cod Liver Oil">Cod Liver Oil</span>, 
+          <span data-item="Sardine, Sardine Oil">Sardine Oil</span>, 
+          <span data-item="Vegetable Oil">Vegetable Oil</span>
+        </li>
+        <li class="level-1">
+          <span data-item="Beef, Beef Fat">Beef Fat</span>, 
+          <span data-item="Olive Oil">Olive Oil</span>
+        </li>
+        <li class="level-0">
+          <span data-item="Coconut Oil">Coconut Oil</span>, 
+          <span data-item="Herring Oil">Herring Oil</span>, 
+          <span data-item="Sesame, Sesame Oil">Sesame Oil</span>
+        </li>
+      </ul>
+    </div>
+    <div>
+      <h4>Food Dye</h4>
+      <ul>
+        <li class="level-3">
+          <span data-item="Blue #2, Blue, Blue 2, Blue2">Blue #2</span>, 
+          <span data-item="Red #40, Red, Red 40, Red40">Red #40</span>, 
+          <span data-item="Yellow #6, Yellow, Yellow6">Yellow #6</span>
+        </li>
+        <li class="level-2">
+          <span data-item="Caramel, Caramel Color">Caramel Color</span>
+        </li>
+        <li class="level-1"></li>
+        <li class="level-0">
+          <span data-item="Blue #1, Blue, Blue 1, Blue1">Blue #1</span>, 
+          <span data-item="Yellow #5, Yellow, Yellow 5, Yellow5">Yellow #5</span>
+        </li>
+      </ul>
+    </div>
+    
+    <div>
+      <h4>Grains</h4>
+      <ul>
+        <li class="level-3">
+          <span data-item="Flaxseed">Flaxseed</span>, 
+          <span data-item="Pearled Barley, Barley">Pearled Barley</span>, 
+          <span data-item="Quinoa">Quinoa</span>, 
+          <span data-item="Brown Rice, Rice">Brown Rice</span>, 
+          <span data-item="Wheat Flour, Wheat">Wheat Flour</span>
+        </li>
+        <li class="level-2">
+          <span data-item="Oat Groats">Oat Groats</span>, 
+          <span data-item="White Rice, Rice">White Rice</span>, 
+          <span data-item="Rice Flour, Rice">Rice Flour</span>, 
+          <span data-item="Soy Flour, Soy">Soy Flour</span>, 
+          <span data-item="Wheat Gluten, Wheat">Wheat Gluten</span>
+        </li>
+        <li class="level-1">
+          <span data-item="Casava Root Flour">Casava Root Flour</span>, 
+          <span data-item="Ground Yellow Corn">Ground Yellow Corn</span>, 
+          <span data-item="Whole Grain Sorghum">Whole Grain Sorghum</span>
+        </li>
+        <li class="level-0">
+          <span data-item="Barley">Barley</span>, 
+          <span data-item="Brewers Rice">Brewers Rice</span>, 
+          <span data-item="Corn Meal, Corn, Corn Meal Gluten, Gluten">Corn Meal Gluten</span>, 
+          <span data-item="Corn Meal Millet, Corn Meal, Corn">Corn Meal Millet</span>, 
+          <span data-item="Oat, Oats, Rolled Oats, Steel Cut Oats">Oat</span>, 
+          <span data-item="Quinoa, Quinoa Powder">Quinoa Powder</span>, 
+          <span data-item="Wild Rice, Rice">Wild Rice</span>, 
+          <span data-item="Rice Bran, Rice">Rice Bran</span>, 
+          <span data-item="Rye">Rye</span>, 
+          <span data-item="Soy, Soy Grits, Grits">Soy Grits</span>, 
+          <span data-item="Wheat">Wheat</span>
+        </li>
+      </ul>
+    </div>
+    
+    <div>
+      <h4>Miscellaneous</h4>
+      <ul>
+        <li class="level-3">
+          <span data-item="Apple Pomace">Apple Pomace</span>, 
+          <span data-item="Barley Grass">Barley Grass</span>, 
+          <span data-item="Beet Pulp">Beet Pulp</span>, 
+          <span data-item="Catnip">Catnip</span>, 
+          <span data-item="Hemp">Hemp</span>, 
+          <span data-item="Tapioca">Tapioca</span>, 
+          <span data-item="Tomato Pomace">Tomato Pomace</span>
+        </li>
+        <li class="level-2">
+          <span data-item="Alfalfa">Alfalfa</span>, 
+          <span data-item="Brewers Yeast">Brewers Yeast</span>, 
+          <span data-item="Yeast">Yeast</span>, 
+          <span data-item="Yeast Culture">Yeast Culture</span>
+        </li>
+        <li class="level-1">
+          <span data-item="Apple Cider Vinegar">Apple Cider Vinegar</span>, 
+          <span data-item="Bee Pollen">Bee Pollen</span>, 
+          <span data-item="Flaxseed Meal">Flaxseed Meal</span>, 
+          <span data-item="Gelatin">Gelatin</span>, 
+          <span data-item="Pea Fiber">Pea Fiber</span>, 
+          <span data-item="Pea Flour">Pea Flour</span>, 
+          <span data-item="Potato Flour">Potato Flour</span>, 
+          <span data-item="Powered Cellulose">Powered Cellulose</span>, 
+          <span data-item="Tapioca Starch">Tapioca Starch</span>
+        </li>
+        <li class="level-0">
+          <span data-item="Chicory Root Extract">Chicory Root Extract</span>, 
+          <span data-item="Dried Egg">Dried Egg</span>, 
+          <span data-item="Miscanthius Grass">Miscanthius Grass</span>, 
+          <span data-item="Pea Starch">Pea Starch</span>, 
+          <span data-item="Potato Starch">Potato Starch</span>, 
+          <span data-item="Psyllium Seed Husk">Psyllium Seed Husk</span>, 
+          <span data-item="Yucca Extract">Yucca Extract</span>
+        </li>
+      </ul>
+    </div>
+    <div>
+      <h4>Nuts</h4>
+      <ul>
+        <li class="level-3">
+          <span data-item="Brazil Nuts">Brazil Nuts</span>, 
+          <span data-item="Peanut Butter">Peanut Butter</span>, 
+          <span data-item="Peanuts">Peanuts</span>, 
+          <span data-item="Pistachios">Pistachios</span>, 
+          <span data-item="Walnuts">Walnuts</span>
+        </li>
+        <li class="level-2"></li>
+        <li class="level-1">
+          <span data-item="Cashews">Cashews</span>
+        </li>
+        <li class="level-0">
+          <span data-item="Almonds">Almonds</span>
+        </li>
+      </ul>
+    </div>
+    <div>
+      <h4>Probiotics</h4>
+      <ul>
+        <li class="level-3">
+          <span data-item="Dried Trichoderma reesei Fermentation Prod.">Dried Trichoderma reesei Fermentation Prod.</span>
+        </li>
+        <li class="level-2">
+          <span data-item="Dried Enterococcus faecium fermentation Prod.">Dried Enterococcus faecium fermentation Prod.</span>, 
+          <span data-item="Dried Lactobacillus bulgaricus fermentation Prod.">Dried Lactobacillus bulgaricus fermentation Prod.</span>, 
+          <span data-item="Streptococcus thermophilus fermentation Prod.">Streptococcus thermophilus fermentation Prod.</span>
+        </li>
+      </ul>
+    </div>
+    
+      <div>
+        <h4>Protein</h4>
+        <ul>
+          <li class="level-3">
+            <span data-item="Beef Liver">Beef Liver</span>, 
+            <span data-item="Beef Meal">Beef Meal</span>, 
+            <span data-item="Beef Tallow">Beef Tallow</span>, 
+            <span data-item="Bison Meal">Bison Meal</span>, 
+            <span data-item="Chicken By Product">Chicken By Product</span>, 
+            <span data-item="Potato Protein">Potato Protein</span>, 
+            <span data-item="Soybean Meal">Soybean Meal</span>
+          </li>
+          <li class="level-2">
+            <span data-item="Alfalfa Nutrient Concentrate">Alfalfa Nutrient Concentrate</span>, 
+            <span data-item="Alligator Meal">Alligator Meal</span>, 
+            <span data-item="Bacon">Bacon</span>, 
+            <span data-item="Beef Hide">Beef Hide</span>, 
+            <span data-item="Chicken Heart">Chicken Heart</span>, 
+            <span data-item="Chicken Meal">Chicken Meal</span>, 
+            <span data-item="Egg Yolk (Duck)">Egg Yolk (Duck)</span>, 
+            <span data-item="Egg Yolk">Egg Yolk</span>, 
+            <span data-item="Quail">Quail</span>, 
+            <span data-item="Egg Yolk (Chicken)">Egg Yolk (Chicken)</span>, 
+            <span data-item="Pheasant">Pheasant</span>, 
+            <span data-item="Pheasant Heart">Pheasant Heart</span>, 
+            <span data-item="Water Buffalo">Water Buffalo</span>
+          </li>
+          <li class="level-1">
+            <span data-item="Bone Meal">Bone Meal</span>, 
+            <span data-item="Chicken Liver">Chicken Liver</span>, 
+            <span data-item="Coconut Meal">Coconut Meal</span>, 
+            <span data-item="Duck">Duck</span>, 
+            <span data-item="Duck Gizzards">Duck Gizzards</span>, 
+            <span data-item="Lamb Meal">Lamb Meal</span>, 
+            <span data-item="Pork Skins">Pork Skins</span>, 
+            <span data-item="Turkey">Turkey</span>
+          </li>
+          <li class="level-0">
+            <span data-item="Kangaroo">Kangaroo</span>, 
+            <span data-item="Lamb">Lamb</span>, 
+            <span data-item="Pork Meal">Pork Meal</span>, 
+            <span data-item="Pheasant Liver">Pheasant Liver</span>, 
+            <span data-item="Quail">Quail</span>, 
+            <span data-item="Rabbit Meal">Rabbit Meal</span>, 
+            <span data-item="Soy Protein, soy protein Concentrate">Soy Protein Concentrate</span>, 
+            <span data-item="Soy Protein Isolate">Soy Protein Isolate</span>, 
+            <span data-item="Turkey Meal">Turkey Meal</span>, 
+            <span data-item="Venison,Venison Meal">Venison Meal</span>
+          </li>
+        </ul>
+      </div>
+      <div>
+        <h4>Seafood</h4>
+        <ul>
+          <li class="level-3">
+            <span data-item="Lobster">Lobster</span>, 
+            <span data-item="Mackerel">Mackerel</span>, 
+            <span data-item="Ocean Fish Meal">Ocean Fish Meal</span>, 
+            <span data-item="Sea Bass">Sea Bass</span>, 
+            <span data-item="Trout">Trout</span>, 
+            <span data-item="Catfish, Catfish Meal">Catfish Meal</span>
+          </li>
+          <li class="level-2">
+            <span data-item="Anchovy">Anchovy</span>, 
+            <span data-item="Cod">Cod</span>, 
+            <span data-item="Fish Meal">Fish Meal</span>, 
+            <span data-item="Herring">Herring</span>, 
+            <span data-item="Salmon, Salmon Meal">Salmon Meal</span>
+          </li>
+          <li class="level-1">
+            <span data-item="Fish, Fish broth">Fish broth</span>, 
+            <span data-item="Oyster">Oyster</span>, 
+            <span data-item="Salmon">Salmon</span>, 
+            <span data-item="Sardine">Sardine</span>
+          </li>
+          <li class="level-0">
+            <span data-item="Sole">Sole</span>
+          </li>
+        </ul>
+      </div>
+    <div>
+      <h4>Spice</h4>
+      <ul>
+        <li class="level-3">
+          <span data-item="Sage, Sage Powder">Sage Powder</span>
+        </li>
+        <li class="level-2">
+          <span data-item="Parsley">Parsley</span>
+        </li>
+        <li class="level-0">
+          <span data-item="basil">Basil</span>, <span data-item="cilantro">Cilantro</span>, Fenugreek Seed, Ginger, Oregano Powder, Parsley Flakes, Rosemary, Sage
+        </li>
+    </div>
+    <div>
+      <h4>Sweetener</h4>
+      <ul>
+        <li class="level-1">
+          <span data-item="High Fructose Corn Syrup">High Fructose Corn Syrup</span>
+        </li>
+        <li class="level-0">
+          <span data-item="Sucrose">Sucrose</span>, 
+          <span data-item="Brown Sugar">Brown Sugar</span>
+        </li>
+      </ul>
+    </div>
+    <div>
+      <h4>Synthetic Additive</h4>
+      <ul>
+        <li class="level-3">
+          <span data-item="Agar Gum">Agar Gum</span>, 
+          <span data-item="Calcium Sulfate">Calcium Sulfate</span>, 
+          <span data-item="Ferrous Sulfate">Ferrous Sulfate</span>, 
+          <span data-item="Manganese Proteinate">Manganese Proteinate</span>, 
+          <span data-item="Niacin">Niacin</span>, 
+          <span data-item="Potassium Chloride">Potassium Chloride</span>, 
+          <span data-item="Pyridoxine Hydrochloride">Pyridoxine Hydrochloride</span>, 
+          <span data-item="Riboflavin">Riboflavin</span>, 
+          <span data-item="Sodium Selenate">Sodium Selenate</span>, 
+          <span data-item="Soy Lecithin">Soy Lecithin</span>, 
+          <span data-item="Taurine">Taurine</span>, 
+          <span data-item="E 307 Alpha-Tocopherols">E 307 Alpha-Tocopherols</span>
+        </li>
+        <li class="level-2">
+          <span data-item="Biotin">Biotin</span>, 
+          <span data-item="Calcium Iodate">Calcium Iodate</span>, 
+          <span data-item="Carrageenan">Carrageenan</span>, 
+          <span data-item="Copper Sulfate">Copper Sulfate</span>, 
+          <span data-item="Lecithins">Lecithins</span>, 
+          <span data-item="Manganese Sulfate">Manganese Sulfate</span>, 
+          <span data-item="Zinc Sulfate">Zinc Sulfate</span>
+        </li>
+      </ul>
+    </div>
+    <div>
+      <h4>Vegetables</h4>
+      <ul>
+        <li class="level-3">
+          <span data-item="Asparagus">Asparagus</span>, 
+          <span data-item="Beets">Beets</span>, 
+          <span data-item="Lentils">Lentils</span>, 
+          <span data-item="Button Mushrooms">Button Mushrooms</span>, 
+          <span data-item="Porcini Mushrooms">Porcini Mushrooms</span>, 
+          <span data-item="White Potato">White Potato</span>, 
+          <span data-item="Yellow Potato">Yellow Potato</span>
+        </li>
+        <li class="level-2">
+          <span data-item="Green Beans">Green Beans</span>, 
+          <span data-item="Carrots">Carrots</span>, 
+          <span data-item="Corn">Corn</span>, 
+          <span data-item="Cordyceps Mushrooms">Cordyceps Mushrooms</span>, 
+          <span data-item="Cremini Mushrooms">Cremini Mushrooms</span>, 
+          <span data-item="Enoki Mushrooms">Enoki Mushrooms</span>, 
+          <span data-item="Maitake Mushrooms">Maitake Mushrooms</span>, 
+          <span data-item="Turkey Tail Mushrooms">Turkey Tail Mushrooms</span>, 
+          <span data-item="Butternut Squash">Butternut Squash</span>
+        </li>
+        <li class="level-1">
+          <span data-item="Beets">Beets</span>, 
+          <span data-item="Chaga Mushrooms">Chaga Mushrooms</span>, 
+          <span data-item="Lion's Mane">Lion's Mane</span>, 
+          <span data-item="Zucchini Squash">Zucchini Squash</span>
+        </li>
+        <li class="level-0">
+          <span data-item="Chickpeas">Chickpeas</span>, 
+          <span data-item="Broccoli">Broccoli</span>, 
+          <span data-item="Brussels Sprouts">Brussels Sprouts</span>, 
+          <span data-item="Cabbage">Cabbage</span>, 
+          <span data-item="Cauliflower">Cauliflower</span>, 
+          <span data-item="Celery">Celery</span>, 
+          <span data-item="Chicory Root">Chicory Root</span>, 
+          <span data-item="Oyster Mushrooms">Oyster Mushrooms</span>, 
+          <span data-item="Portabella Mushrooms">Portabella Mushrooms</span>, 
+          <span data-item="Reishi Mushrooms">Reishi Mushrooms</span>, 
+          <span data-item="Shiitake Mushrooms">Shiitake Mushrooms</span>, 
+          <span data-item="Truffles">Truffles</span>, 
+          <span data-item="Peas">Peas</span>, 
+          <span data-item="Pumpkin">Pumpkin</span>, 
+          <span data-item="Spinach">Spinach</span>, 
+          <span data-item="Yams">Yams</span>
+        </li>
+      </ul>
+    </div>
+      <div>
+        <h4>Environmental</h4>
+        <ul>
+          <li class="level-3">
+            <span data-item="Aspergillus Fumigatus">Aspergillus Fumigatus</span>, 
+            <span data-item="Bamboo">Bamboo</span>, 
+            <span data-item="Butoxyethanol">Butoxyethanol</span>, 
+            <span data-item="Cat Dander">Cat Dander</span>, 
+            <span data-item="Cherry Tree">Cherry Tree</span>, 
+            <span data-item="Dog Dander">Dog Dander</span>, 
+            <span data-item="Duck, Duck Feathers">Duck Feathers</span>, 
+            <span data-item="Fescue">Fescue</span>, 
+            <span data-item="Glycerin">Glycerin</span>, 
+            <span data-item="Hydrogen Peroxide">Hydrogen Peroxide</span>, 
+            <span data-item="Methylparaben">Methylparaben</span>, 
+            <span data-item="Mites, clover, dust, ear, spider">Mites (clover, dust, ear, spider)</span>, 
+            <span data-item="Mold, mucor, stachybotrys, trichoderma">Mold (mucor, stachybotrys, trichoderma)</span>, 
+            <span data-item="Pansy, pansies">Pansy</span>, 
+            <span data-item="Phthalates">Phthalates</span>, 
+            <span data-item="Pine Tree, Pine, Pinus spp.">Pine Tree (Pinus spp.)</span>, 
+            <span data-item="Polyethylene, Polyethylene Glycol">Polyethylene Glycol</span>,
+            <span data-item="Propylene, Propylene Glycol">Propylene Glycol</span>,
+            <span data-item="Rose, Roses, Rose Bush, Rosa">Rose (Rosa spp.)</span>,
+            <span data-item="Pine Tree, Pine, Pinus spp.">Pine Tree (Pinus spp.)</span>,,
+            <span data-item="Triclosan">Triclosan</span>,
+          </li>
+          <li class="level-2">
+            <span data-item="Ammonium Laureth Sulfate">Ammonium Laureth Sulfate</span>, 
+            <span data-item="Ash Tree (Fraxinus excelsior)">Ash Tree (Fraxinus excelsior)</span>, 
+            <span data-item="Aspen Tree (Populus tremula)">Aspen Tree (Populus tremula)</span>, 
+            <span data-item="Bee">Bee</span>, 
+            <span data-item="Buttercup">Buttercup</span>, 
+            <span data-item="Cockroaches">Cockroaches</span>, 
+            <span data-item="Elm, Elm Tree">Elm Tree</span>, 
+            <span data-item="Fipronil">Fipronil</span>, 
+            <span data-item="Goldenrod">Goldenrod</span>, 
+            <span data-item="Jasmine">Jasmine</span>, 
+            <span data-item="Malt Vinegar">Malt Vinegar</span>, 
+            <span data-item="Mold, alternaria, penicillium, serpula">Mold (alternaria, penicillium, serpula)</span>, 
+            <span data-item="Nylon">Nylon</span>, 
+            <span data-item="Oak, Oak Tree">Oak Tree</span>, 
+            <span data-item="Pigeon Dung">Pigeon Dung</span>, 
+            <span data-item="Polysorbates">Polysorbates</span>, 
+            <span data-item="Rabbits, Rabbit">Rabbits</span>, 
+            <span data-item="Silk">Silk</span>, 
+            <span data-item="Sodium Hypochlorite">Sodium Hypochlorite</span>, 
+            <span data-item="Sodium Lauryl Sulfate">Sodium Lauryl Sulfate</span>, 
+            <span data-item="Ticks">Ticks</span>, 
+            <span data-item="White Vinegar">White Vinegar</span>, 
+            <span data-item="Willow Tree">Willow Tree</span>, 
+            <span data-item="Zoysia Grass">Zoysia Grass</span>
+          </li>
+          <li class="level-1">
+            <span data-item="Calcium, calcium Hypochlorite">Calcium Hypochlorite</span>, 
+            <span data-item="colonial, colonial bent grass, grass, bent grass">Colonial Bent Grass</span>, 
+            <span data-item="Cotton">Cotton</span>, 
+            <span data-item="Duck Feathers">Duck Featers</span>, 
+            <span data-item="Hawthorn">Hawthorn</span>
+          </li>
+        </ul>
+      </div>
+  </div>
+  
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  <script>
+    document.getElementById('check-ingredients-button').addEventListener('click', function() {
+      const ingredientText = document.getElementById('ingredients-textarea').value.toLowerCase();
+      const ingredients = ingredientText.split(',').map(item => item.trim());
+
+      const resultsContainer = document.getElementById('results-content');
+      resultsContainer.innerHTML = '';
+
+      ingredients.forEach(ingredient => {
+        let found = false;
+
+        // convert the ingredint to lowercase
+        ingredient = ingredient.toLowerCase();
+
+        console.log('beginning', ingredient);
+
+        // Loop over all spans with data-item attributes
+        document.querySelectorAll('span[data-item]').forEach(span => {
+          // Split the data-item attribute by comma and trim whitespace
+          const items = span.getAttribute('data-item').toLowerCase().split(',').map(item => item.trim());
+          
+          // Check if the ingredient is in the list of items
+          if (items.includes(ingredient)) {
+            const liElement = span.closest('li'); // Get the closest li parent element
+            const coloredItem = document.createElement('span');
+            coloredItem.textContent = span.textContent;
+            coloredItem.className = liElement.className; // Apply the class from the li element
+
+            // Make bold if level 3, 2, or 1
+            if (liElement.classList.contains('level-3') || liElement.classList.contains('level-2') || liElement.classList.contains('level-1')) {
+              coloredItem.style.fontWeight = 'bold';
+            }
+
+            resultsContainer.appendChild(coloredItem);
+            resultsContainer.appendChild(document.createTextNode(', '));
+            found = true;
+          }
+        });
+
+        if (!found) {
+          const blackItem = document.createElement('span');
+          blackItem.textContent = ingredient;
+          blackItem.style.color = 'black';
+          resultsContainer.appendChild(blackItem);
+          resultsContainer.appendChild(document.createTextNode(', '));
+        }
+      });
+
+      // Remove the last comma and space
+      if (resultsContainer.lastChild) {
+        resultsContainer.removeChild(resultsContainer.lastChild);
+      }
+    });
+
+    document.getElementById('level-3-btn').addEventListener('click', function() {
+      toggleDetails('level-3-details');
+    });
+    document.getElementById('level-2-btn').addEventListener('click', function() {
+      toggleDetails('level-2-details');
+    });
+    document.getElementById('level-1-btn').addEventListener('click', function() {
+      toggleDetails('level-1-details');
+    });
+    document.getElementById('level-0-btn').addEventListener('click', function() {
+      toggleDetails('level-0-details');
+    });
+
+    function toggleDetails(detailsId) {
+      const details = document.getElementById(detailsId);
+      if (details.style.display === 'none' || details.style.display === '') {
+        // Hide all details first
+        document.querySelectorAll('.legend-details').forEach(detail => {
+          detail.style.display = 'none';
+        });
+        // Show the selected details
+        details.style.display = 'block';
+      } else {
+        details.style.display = 'none';
+      }
+    }
+
+  </script>
+</body>
+</html>

@@ -1,0 +1,93 @@
+
+<script src="quagga.min.js"></script>
+<script>
+function startScanner() {
+    Quagga.init({
+        inputStream: {
+            type: "LiveStream",
+            constraints: {
+                width: 640,
+                height: 480,
+                facingMode: "environment" // Use the rear camera on devices
+            },
+            area: {
+                top: "0%",
+                right: "0%",
+                left: "0%",
+                bottom: "0%"
+            }
+        },
+        locator: {
+            patchSize: "medium",
+            halfSample: true
+        },
+        numOfWorkers: 4,
+        decoder: {
+            readers: ["code_128_reader"] // You can add more barcode types as needed
+        },
+        locate: true
+    }, function(error) {
+        if (error) {
+            console.log(error);
+            return;
+        }
+        Quagga.start();
+    });
+
+    Quagga.onDetected(function(result) {
+        var code = result.codeResult.code;
+        document.getElementById('barcodeInput').value = code;
+        Quagga.stop();
+    });
+}
+
+function getFoodFacts() {
+
+    ///var https = require("https");
+
+    var barcode = document.getElementById("barcodeInput").value;
+
+  $.ajax({
+    url: "https://en.wiki.openfoodfacts.org/API/api/v0/product/" + barcode + ".json",
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    success: function(data) {
+      console.log(data);f
+      const reply = data.choices[0].message.content;
+    },
+    error: function(error) {
+      console.error('Error:', error);
+    }
+  });
+
+  /*
+    https.get(
+        "https://en.wiki.openfoodfacts.org/API/api/v0/product/" + barcode + ".json",
+        (resp) => {
+            let data = "";
+
+            // A chunk of data has been received.
+            resp.on("data", (chunk) => {
+                data += chunk;
+            });
+
+            // The whole response has been received.
+            resp.on("end", () => {
+                console.log(JSON.parse(data));
+            });
+        }
+    ).on("error", (err) => {
+        console.log("Error: " + err.message);
+    });
+    */
+}
+
+
+</script>
+
+<input type="text" id="barcodeInput" placeholder="Scan Barcode" value="0078000037708">
+<button onclick="startScanner()">Scan</button>
+<button onclick="getFoodFacts()">Search</button>
+<div id="interactive" class="viewport"></div>

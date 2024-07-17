@@ -1,0 +1,66 @@
+<html>
+<head>
+    <title>pdf</title>
+    <style>
+    body {
+    width: 100%;
+    height: 100vh;
+    overflow-x: hidden;
+    margin: 0;
+    }
+
+    </style>
+</head>
+<body>
+    <div id='adobe-dc-view'></div>
+    <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+    <script type='text/javascript' src='https://documentcloud.adobe.com/view-sdk/main.js'></script>
+    <script type='text/javascript'>
+const urlToBase64PDF = "https://christie.technology/base64.txt";
+  //"https://assets.codepen.io/4479906/bodea-summary.pdf.base64";
+const clientID = "52427c7b641f44de864c61fd023d7396"; 
+//"e800d12fc12c4d60960778b2bc4370af";
+
+const viewOptions = {
+  embedMode: "FULL_WINDOW",
+  defaultViewMode: "FIT_PAGE",
+  showAnnotationTools: false,
+  showPrintPDF: false
+};
+
+function base64ToArrayBuffer(base64) {
+  var bin = window.atob(base64);
+  var len = bin.length;
+  var uInt8Array = new Uint8Array(len);
+  for (var i = 0; i < len; i++) {
+    uInt8Array[i] = bin.charCodeAt(i);
+  }
+  return uInt8Array.buffer;
+}
+
+  document.addEventListener("adobe_dc_view_sdk.ready", function () {
+    $.get(
+      urlToBase64PDF,
+      function (pdfData) {
+        var adobeDCView = new AdobeDC.View({
+          clientId: clientID,
+          divId: "adobe-dc-view"
+        });
+        adobeDCView.previewFile(
+          {
+            // convert the Base64 encoded PDF and convert it to an ArrayBuffer
+            // and pass it as a Promise
+            content: { promise: Promise.resolve(base64ToArrayBuffer(pdfData)) },
+            // The filename name to display in the View SDK UI
+            // and also used as the filename of the PDF when downloaded
+            metaData: { fileName: "Bodea Summary.pdf" }
+          },
+          viewOptions
+        );
+      },
+      "text"
+    )
+  });
+
+  </script>
+</html>

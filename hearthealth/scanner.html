@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Heart Health</title>
+    <meta name="theme-color" content="#5180BA">
+    <meta name="description" content="Healthy Amount of Fats Calculator">
+    <link rel="icon" href="img/heart-health-icon.png" type="image/png">
+    <link rel="shortcut icon" href="img/heart-health-icon.png" type="image/png">
+    <link rel="apple-touch-icon" href="img/heart-health-icon.png">
+
+    <!-- our project just needs Font Awesome Solid + Brands -->
+    <link href="assets/fontawesome/css/fontawesome.css" rel="stylesheet">
+    <link href="assets/fontawesome/css/brands.css" rel="stylesheet">
+    <link href="assets/fontawesome/css/solid.css" rel="stylesheet">
+
+    <link rel="stylesheet" type="text/css" href="style/addtohomescreen.css">
+    <script src="vendor/js/addtohomescreen.min.js"></script>
+ 
+    <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.0/dist/JsBarcode.all.min.js"></script>
+
+
+    <style>
+        body {
+            font-family: Roboto, Arial, Verdana, sans-serif;
+            font-weight: 300;
+            font-size: 20px;
+        }
+    </style>
+    <link rel="stylesheet" href="vendor/css/bootstrap.min.css">
+    <script src="quagga.min.js"></script>
+<script>
+function startScanner() {
+    Quagga.init({
+        inputStream: {
+            type: "LiveStream",
+            constraints: {
+                width: 640,
+                height: 480,
+                facingMode: "environment" // Use the rear camera on devices
+            },
+            target: document.querySelector('#interactive') // Render video to this element
+        },
+        decoder: {
+            readers: ["code_128_reader", "ean_reader", "ean_8_reader", "code_39_reader", "code_39_vin_reader", "codabar_reader", "upc_reader", "upc_e_reader"]
+        }
+    }, function(error) {
+        if (error) {
+            console.error(error);
+            return;
+        }
+        Quagga.start();
+    });
+
+    Quagga.onDetected(function(result) {
+        var code = result.codeResult.code;
+        document.getElementById('barcodeInput').value = code;
+        Quagga.stop();
+    });
+}
+
+function getFoodFacts() {
+    // Get the barcode value from the input field
+    const barcode = $('#barcodeInput').val();
+    document.getElementById("result").innerHTML='Result:<br>';
+
+    // Make the AJAX request
+    $.ajax({
+        url: 'https://world.openfoodfacts.org/api/v2/product/'+barcode, // Replace with the correct endpoint
+        type: 'POST',
+        data: {
+            barcode: barcode  // Pass the barcode value
+        },
+        headers: {
+            // Any required headers, e.g., authentication
+        },
+        success: function(response) {
+            console.log(response);
+            document.getElementById("result").innerHTML+='Status: '+response.status_verbose+"<br>";
+            document.getElementById("result").innerHTML+='<br>Product: '+response.product.product_name+"<br>";
+            document.getElementById("result").innerHTML+='<br>Ingredients: '+response.product.ingredients_text+"<br>";
+            document.getElementById("result").innerHTML+='<br>Nutrition Facts: '+response.product.nutriments+"<br>";
+            document.getElementById("result").innerHTML+='<br><span style="float:left;"><img src="'+response.product.image_front_url+'"></span>';
+            document.getElementById("result").innerHTML+=' <span style="float:left;"><img src="'+response.product.image_ingredients_url+'"></span>';
+            document.getElementById("result").innerHTML+=' <span style="float:left;"> <img src="'+response.product.image_nutrition_url+'"></span>';
+            document.getElementById("result").innerHTML+='<br><br>Categories: '+response.product.categories+"<br>";
+
+            //document.getElementById("result").innerHTML+=JSON.stringify(response);
+        },
+        error: function(error) {
+            console.error("Error:", error);
+        }
+    });
+}
+</script>
+
+</head>
+<body>
+    
+<div class="container">
+    <input type="text" id="barcodeInput" placeholder="Scan Barcode" value="0078000037708">
+    <button onclick="startScanner()">Scan</button>
+    <button onclick="getFoodFacts()">Search</button>
+    <div id="result">Result:</div>
+    <div id="interactive" class="viewport"></div>
+</div>
+<!-- jQuery -->
+<script src="vendor/js/jquery.js"></script>
+<!-- Bootstrap JS -->
+<script src="vendor/js/bootstrap.min.js"></script>
+</body>
+</html>

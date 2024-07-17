@@ -1,0 +1,149 @@
+
+<style>body {
+    width: 100%;
+    height: 100vh;
+    overflow-x: hidden;
+    margin: 0;
+    background-color: gainsboro;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    width: 100%;
+}
+
+#toolbar {
+    min-height: 46px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding: 5px;
+    background-color: crimson;
+}
+
+#embeddedView {
+    flex-grow: 1;
+}
+
+#submitButton {
+    background-color: darkred;
+    height: 100%;
+    padding-left: 20px;
+    padding-right: 20px;
+    border-radius: 5px;
+    color: white;
+    font-weight: bold;
+    margin-right: 6px;
+    border: 1px solid white;
+    max-height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    f
+}
+
+button:hover {
+    background-color: red;
+}
+
+#toolbar p {
+    font-size: 9pt;
+    padding-right: 10px;
+    margin: 5px;
+    color: white;
+}
+</style>
+<div class="container">
+    <div id="toolbar">
+        <p>Clicking Submit will convert the ArrayBuffer of the PDF file content into a base64 string and then use
+            that in a data URL to download the file. In practice, you would replace this function with one that
+            submits the base64 content to another process where it can be converted back to a binary PDF.</p>
+        <a id="submitButton">Submit</a>
+    </div>
+    <div id="embeddedView"></div>
+</div>
+<script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+<script src="https://documentcloud.adobe.com/view-sdk/main.js"></script>
+<script>
+const urlToPDF = "test2.pdf";
+const clientId = "52427c7b641f44de864c61fd023d7396";
+const viewerOptions = {
+  embedMode: "FULL_WINDOW",
+  defaultViewMode: "FIT_PAGE",
+  showDownloadPDF: false,
+  showPrintPDF: true,
+  showLeftHandPanel: false,
+  showAnnotationTools: false
+};
+
+const saveOptions = {
+  autoSaveFrequency: 1,
+  enableFocusPolling: true,
+  showSaveButton: false
+};
+
+var savedPDFContent = null;
+function submitButtonClicked() {
+  if (savedPDFContent != null) {
+    var base64PDF = arrayBufferToBase64(savedPDFContent);
+    var fileURL = "data:application/pdf;base64," + base64PDF;
+    window.open(fileURL, "_blank");
+  }
+}
+
+function arrayBufferToBase64(buffer) {
+  var binary = "";
+  var bytes = new Uint8Array(buffer);
+  var len = bytes.byteLength;
+  for (var i = 0; i < len; i++) {
+    binary += String.fromCharCode(bytes[i]);
+  }
+  return window.btoa(binary);
+}
+
+document.addEventListener("adobe_dc_view_sdk.ready", function () {
+  // Create embedded view
+  var adobeDCView = new AdobeDC.View({
+    clientId: clientId,
+    divId: "embeddedView"
+  });
+
+  adobeDCView.registerCallback(
+    AdobeDC.View.Enum.CallbackType.SAVE_API,
+    function (metaData, content, options) {
+      /* Add your custom save implementation here...and based on that resolve or reject response in given format */
+      var base64PDF = arrayBufferToBase64(content);
+      var fileURL = "data:application/pdf;base64," + base64PDF;
+      $("#submitButton").attr("href", fileURL);
+      /* End save code */
+      return new Promise((resolve, reject) => {
+        resolve({
+          code: AdobeDC.View.Enum.ApiResponseCode.SUCCESS,
+          data: {
+            /* Updated file metadata after successful save operation */
+            metaData: { fileName: urlToPDF.split("/").slice(-1)[0] }
+          }
+        });
+      });
+    },
+    saveOptions
+  );
+
+  // Show the file
+  var previewFilePromise = adobeDCView.previewFile(
+    {
+      content: {
+        location: {
+          url: "https://assets.codepen.io/4479906/Check_Request_Full.pdf"
+        }
+      },
+      metaData: { fileName: "Check_Request_Full" }
+    },
+    viewerOptions
+  );
+});
+
+</script>

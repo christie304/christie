@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Allergens To Avoid</title>
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    .highlight {
+      background-color: white;
+    }
+    .level-3 {
+      color: red;
+    }
+    .level-2 {
+      color: orange;
+    }
+    .level-1 {
+      color: green;
+    }
+    .level-0{
+        color:gray;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1 class="mt-5">Allergens To Avoid</h1>
+    <div class="form-group">
+      <div class="input-group">
+        <input type="text" class="form-control" id="search-input" placeholder="Search allergens...">
+        <div class="input-group-append">
+          <button class="btn btn-primary" id="search-button" type="button">Search</button>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <h4>Dairy</h4>
+      <ul>
+        <li class="level-3">Cheese (American), Milk (cow)</li>
+        <li class="level-2">Cheese (Swiss)</li>
+        <li class="level-1"></li>
+        <li class="level-0">Cheese (Cheddar, Cottage), Yogurt (Greek, Plain)</li>
+      </ul>
+    </div>
+    <div>
+      <h4>Fat</h4>
+      <ul>
+        <li class="level-3">Almond Oil, Canola Oil, Chicken Fat, Pork Fat, Salmon Oil, Soybean Oil, Sunflower Oil</li>
+        <li class="level-2">Cod Liver Oil, Sardine Oil, Vegetable Oil</li>
+        <li class="level-1">Beef Fat, Olive Oil</li>
+        <li class="level-0">Coconut Oil, Herring Oil, Sesame Oil</li>
+      </ul>
+    </div>
+    <div>
+      <h4>Food Dye</h4>
+      <ul>
+        <li class="level-3">Blue #2, Red #40, Yellow #6</li>
+        <li class="level-2">Caramel Color</li>
+        <li class="level-1"></li>
+        <li class="level-0">Blue #1, Yellow #5</li>
+      </ul>
+    </div>
+    <div>
+      <h4>Grains</h4>
+      <ul>
+        <li class="level-3">Flaxseed, Pearled Barley, Quinoa, Brown Rice, Wheat Flour</li>
+        <li class="level-2">Oat Groats, White Rice, Rice Flour, Soy Flour, Wheat Gluten</li>
+        <li class="level-1">Casava Root Flour, Ground Yellow Corn, Whole Grain Sorghum</li>
+        <li class="level-0">Barley, Brewers Rice, Corn Meal Gluten, Corn Meal Millet, Oat, Quinoa Powder, Wild Rice, Rice Bran, Rye, Soy Grits, Wheat</li>
+      </ul>
+    </div>
+    <div>
+      <h4>Miscellaneous</h4>
+      <ul>
+        <li class="level-3">Apple Pomace, Barley Grass, Beet Pulp, Catnip, Hemp, Tapioca, Tomato Pomace</li>
+        <li class="level-2">Alfalfa, Brewers Yeast, Yeast, Yeast Culture</li>
+        <li class="level-1">Apple Cider Vinegar, Bee Pollen, Flaxseed Meal, Gelatin, Pea Fiber, Pea Flour, Potato Flour, Powered Cellulose, Tapioca Starch</li>
+        <li class="level-0">Chicory Root Extract, Dried Egg, Miscanthuis Grass, Pea Starch, Potato Starch, Psyllium Seed Husk, Yucca Extract</li>
+      </ul>
+    </div>
+    <div>
+      <h4>Nuts</h4>
+      <ul>
+        <li class="level-3">Brazil Nuts, Peanut Butter, Peanuts, Pistachios, Walnuts</li>
+        <li class="level-2"></li>
+        <li class="level-1">Cashews</li>
+        <li class="level-0">Almonds</li>
+      </ul>
+    </div>
+    <div>
+      <h4>Probiotics</h4>
+      <ul>
+        <li class="level-3">Dried Trichoderma reesei Fermentation Prod.</li>
+        <li class="level-2">Dried Enterococcus faecium fermentation Prod., Dried Lactobacillus bulgaricus fermentation Prod., Streptococcus thermophilus fermentation Prod.</li>
+      </ul>
+    </div>
+    <div>
+      <h4>Protein</h4>
+      <ul>
+        <li class="level-3">Beef Liver, Beef Meal, Beef Tallow, Bison Meal, Chicken By Product, Potato Protein, Soybean Meal</li>
+        <li class="level-2">Alfalfa Nutrient Concentrate, Alligator Meal, Bacon, Beef Hide, Chicken Heart, Chicken Meal, Egg Yolk (Duck), Egg Yolk, Quail, Egg Yolk (Chicken) Pheasant, Pheasant Heart, Water Buffalo</li>
+        <li class="level-1">Bone Meal, Chicken Liver, Coconut Meal, Duck, Duck Gizzards, Lamb Meal, Pork Skins, Turkey</li>
+        <li class="level-0">Kangaroo, Lamb, Pork Meal, Pheasant Liver, Quail, Rabbit Meal, Soy Protein Concentrate, Soy Protein Isolate, Turkey Meal, Venison Meal</li>
+    </ul>
+    </div>
+    <div>
+      <h4>Seafood</h4>
+      <ul>
+        <li class="level-3">Lobster, Mackerel, Ocean Fish Meal, Sea Bass, Trout</li>
+        <li class="level-2">Anchovy, Cod, Fish Meal, Herring, Salmon Meal</li>
+      </ul>
+    </div>
+    <div>
+      <h4>Spice</h4>
+      <ul>
+        <li class="level-3">Sage Powder</li>
+        <li class="level-2">Parsley</li>
+        <li class="level-0">Basil, Cilantro, Fenugreek Seed, Ginger, Oregano Poweder, Parsley Flakes, Rosemary, Sage</li>
+      </ul>
+    </div>
+    <div>
+        <h4>Sweetener</h4>
+        <ul>
+          <li class="level-1">High Fructose Corn Syrup</li>
+          <li class="level-0">Sucrose, Brown Sugar</li>
+        </ul>
+    </div>
+    <div>
+      <h4>Synthetic Additive</h4>
+      <ul>
+        <li class="level-3">Agar Gum, Calcium Sulfate, Ferrous Sulfate, Manganese Proteinate, Niacin, Potassium Chloride, Pyridoxine Hydrochloride, Riboflavin, Sodium Selenate, Soy Lecithin, Taurine, E 307 Alpha-Tocopherols</li>
+        <li class="level-2">Biotin, Calcium Iodate, Carrageenan, Copper Sulfate, Lechithins, Manganese Sulfate, Zinc Sulfate</li>
+      </ul>
+    </div>
+    <div>
+      <h4>Vegetables</h4>
+      <ul>
+        <li class="level-3">Asparagus, Beets, Lentils, Button Mushrooms, Porcini Mushrooms, White Potato, Yellow Potato</li>
+        <li class="level-2">Green Beans, Carrots, Corn, Cordyceps Mushrooms, Cremini Mushrooms, Enoki Mushrooms, Maitake Mushrooms, Turkey Tail Mushrooms, Butternut Squash</li>
+        <li class="level-1">Beets, Chaga Mushrooms, Lion's Mane, Zucchini Squash</li>
+        <li class="level-0">Chickpeas, Broccoli, Brussels Sprouts, Cabbage, Cauliflower, Celery, Chicory Root, Oyster Mushrooms, Portabella Mushrooms, Reishi Mushrooms, Shiitake Mushrooms, Truffles, Peas, Pumpkin, Spinach, Yams</li>
+    </ul>
+    </div>
+    <div>
+      <h4>Environmental</h4>
+      <ul>
+        <li class="level-3">Aspergillus Fumigatus, Bamboo, Butoxyethanol, Cat Dander, Cherry Tree, Duck Feathers, Fescue, Glycerin, Hydrogen Peroxide, Methylparaben, Mites (clover, dust, ear, spider), Mold (mucor, stachybotrys, trichoderma), Pansy, Phthalates, Pine Tree (Pinus spp.), Polyethylene Glycol, Rose (Rosa spp.), Spruce Tree (Picea abies), Triclosan</li>
+        <li class="level-2">Ammonium Laureth Sulfate, Ash Tree (Fraxinus excelsior), Aspen Tree (Populus tremula), Bee, Buttercup, Cockroaches, Elm Tree, Fipronil, Goldenrod, Jasmine, Malt Vinegar, Mold (alternaria, penicillium, serpula), Nylon, Oak Tree, Pigeon Dung, Polysorbates, Rabbits, Silk, Sodium Hypochlorite, Sodium Lauryl Sulfate, Ticks, White Vinegar, Willow Tree, Zoysia Grass</li>
+      </ul>
+    </div>
+  </div>
+  
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  <script>
+    document.getElementById('search-button').addEventListener('click', function() {
+      // Remove previous highlights
+      document.querySelectorAll('.highlight').forEach(function(element) {
+        element.classList.remove('highlight');
+      });
+
+      // Get the search term
+      const searchTerm = document.getElementById('search-input').value.toLowerCase();
+
+      if (searchTerm) {
+        // Get all list items
+        const items = document.querySelectorAll('ul li');
+
+        items.forEach(function(item) {
+          // Check if the item text includes the search term
+          if (item.textContent.toLowerCase().includes(searchTerm)) {
+            item.classList.add('highlight');
+            item.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          }
+        });
+      }
+    });
+  </script>
+</body>
+</html>

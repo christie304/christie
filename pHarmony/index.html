@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>pH Levels for Luna</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+<div class="container mt-5">
+    <h2 class="text-center">pH Levels for <a class="fakelink">Luna</a></h2>
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <canvas id="phChart"></canvas>
+            <a href="#" id="showNotesLink" class="btn btn-primary mt-3">Click to show notes</a>
+            <ul id="notesList" class="list-group mt-3" style="display: none;"></ul>
+        </div>
+    </div>
+</div>
+
+<div class="container mt-5">
+  <div class="alert alert-success">
+    <h4 class="alert-heading">PAWWWSome!</h4>
+    <p>The pH levels for Luna are within the recommended range. Please check the pH levels using the <a href="fakelink">clean catch method</a>.</p>
+    <hr>
+    <p class="mb-0">For more information on how to adjust the pH levels, please refer to the <a class="fakelink">documentation</a>.</p>
+  </div>
+</div>
+
+
+
+<script>
+    // Sample data for the chart
+    const labels = ['06/10/24', '06/17/24', '06/18/24', '06/18/24', '06/18/24', '06/19/24', '06/19/24'];
+    const collectMethod = ['Vet', 'Vet', 'Home', 'Home', 'Home', 'Home', 'Home'];
+    const  notes = ['Blood in Urine', '7 Days On Clavacillin', 'Adding ACV', 'ACV', 'ACV', 'ACV', 'ACV'];
+    const pHData = [7.0, 9.0, 8.0, 8, 7, 7.5, 6.5];
+    const data = {
+        labels: labels,
+        datasets: [{
+            label: 'pH Levels',
+            data: pHData,           
+            borderColor: 'rgba(75, 192, 192, 1)',
+            backgroundColor: 'rgba(75, 192, 192, 0.2)',
+            fill: false,
+            tension: 0.1
+        }]
+    };
+
+    const config = {
+        type: 'line',
+        data: data,
+        options: {
+            responsive: true,
+            plugins: {
+                tooltip: {
+                    callbacks: {
+                        // Customize the tooltip to show notes
+                        label: function(context) {
+                            const index = context.dataIndex;
+                            const note = notes[index];
+                            const value = context.dataset.data[index];
+                            const method = collectMethod[index];
+                            return `pH: ${value} - ${method} - ${note}`;
+                        }
+                    }
+                }
+            },
+            scales: {
+                x: {
+                    display: true,
+                    title: {
+                        display: true,
+                        text: 'Date'
+                    }
+                },
+                y: {
+                    display: true,
+                    title: {
+                        display: true,
+                        text: 'pH Level'
+                    },
+                    suggestedMin: 6,
+                    suggestedMax: 8
+                }
+            }
+        }
+    };
+
+
+    // Render the chart
+    window.onload = function() {
+        const ctx = document.getElementById('phChart').getContext('2d');
+        new Chart(ctx, config);
+    };
+
+    // Show notes when the link is clicked
+    document.getElementById('showNotesLink').addEventListener('click', function(event) {
+        event.preventDefault();
+        const notesList = document.getElementById('notesList');
+        if (notesList.style.display === 'none') {
+            notesList.style.display = 'block';
+            notesList.innerHTML = '';
+            notes.forEach((note, index) => {
+                const listItem = document.createElement('li');
+                listItem.className = 'list-group-item';
+                listItem.textContent = `Date: ${labels[index]}, pH: ${pHData[index]}, ${note}`;
+                notesList.appendChild(listItem);
+            });
+        } else {
+            notesList.style.display = 'none';
+        }
+    });
+</script>
+
+<!-- Bootstrap JS and dependencies -->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+</body>
+</html>
